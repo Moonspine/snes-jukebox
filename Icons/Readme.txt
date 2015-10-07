@@ -1,0 +1,1 @@
+This folder contains the raw icons used by the SNES jukebox menus.

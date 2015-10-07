@@ -1,0 +1,30 @@
+body {
+  background: #fff;
+  color: #000;
+  font-family: arial, helvetica;
+  font-size: 0.9em;
+}
+
+h1,h2,h3,h4 {
+  margin: 0em;
+}
+
+h3 {
+  background: #eee;
+  margin-bottom: 0.25em;
+  padding: 0.25em;
+}
+
+h4 {
+  border-bottom: 2px solid #eee;
+  margin-bottom: 0.25em;
+}
+
+p {
+  margin: 0em;
+  margin-bottom: 1em;
+}
+
+pre {
+  white-space: pre-line;
+}
