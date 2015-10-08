@@ -5,8 +5,13 @@ I will take the time to do a full writeup in the coming weeks, but the project c
 1) An Atmega 328p (the microcontroller on the Arduino Uno board) clocked at 16 MHz.
 2) A Sony SPC-700 sound module liberated from a functional SNES unit.
 3) A color LCD screen with SD card attached (Adafruit product #358: https://www.adafruit.com/products/358)
+4) A SNES controller for menu navigation, because nostalgia (Adafruit product #131: http://www.adafruit.com/product/131)
 
-Note: Since this does make use of libraries for the LCD screen, you'll need to get them from Adafruit's site. See product 358's description for details.
+Note: Since this does make use of libraries for the LCD screen, you'll need to get them from Adafruit's site. For convenience, these libraries are:
+https://github.com/adafruit/Adafruit-ST7735-Library
+https://github.com/adafruit/Adafruit-GFX-Library
+
+Additionally, I do not have it working with the latest Arduino IDE as of yet. I may fix this in the future, but to run this program correctly, you'll need to download a 1.0.x version of the IDE (I tested this on 1.0.5-r2).
 
 
 This program has the following interesting characteristics:
