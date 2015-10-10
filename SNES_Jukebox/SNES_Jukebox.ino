@@ -64,7 +64,7 @@ void setup()
   pinMode(A1, OUTPUT);
   digitalWrite(A1, HIGH);
   
-  lcd.initR(INITR_REDTAB);
+  lcd.initR(INITR_BLACKTAB);
   
   beginLcdWrite();
   clearLcd(lcd);
