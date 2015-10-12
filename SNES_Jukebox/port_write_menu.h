@@ -59,7 +59,6 @@ public:
     //
     // Write: ff ff ff ff
     //
-    endLcdWrite();
   }
   
   void update(Adafruit_ST7735 &lcd, SNESController &controller) {
