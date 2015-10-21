@@ -20,11 +20,12 @@
  ** Digital Pin 0 - RX
  ** Digital Pin 1 - TX
  ** Digital Pin 2-7 - SNES APU D2-7
- ** Digital Pin 8 - SNES APU address 0
+ ** Digital Pin 8 - SNES APU address 0; LCD Reset
  ** Digital Pin 9 - SNES APU address 1
  ** Digital Pin 10 - SNES APU /RD
- ** Digital Pin 11 - SNES APU /WR; SD Card DI; Controller Latch
- ** Digital Pin 12-13 - SNES APU D0-1; SD Card DO, Clk; -, Controller Clock
+ ** Digital Pin 11 - SNES APU /WR; SD Card / LCD MOSI; Controller Latch
+ ** Digital Pin 12 - SNES APU D0; SD Card MISO
+ ** Digital Pin 13 - SNES APU D1; SD Card / LCD Clk; Controller Clock
  ** Analog Pin 0 (AKA Digital Pin 14) - SNES APU /RESET
  ** Analog Pin 1 - SD Card CS
  ** Analog Pin 2 - SNES APU Address 7

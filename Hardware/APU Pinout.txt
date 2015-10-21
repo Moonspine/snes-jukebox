@@ -1,0 +1,24 @@
+ 1. PA7
+ 2. PA6
+ 3. PA0
+ 4. PA1
+ 5. /WR
+ 6. /RD
+ 7. D0
+ 8. D1
+ 9. D2
+10. D3
+11. D4
+12. D5
+13. D6
+14. D7
+15. /RESET
+16. Not Connected
+17. SMPCK
+18. Vcc
+19. GND
+20. Mute
+21. Audio Right
+22. Audio Left
+23. Audio GND
+24. Audio Vcc

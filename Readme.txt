@@ -1,6 +1,6 @@
 This project contains source code for the SNES jukebox Arduino project by Moonspine.
 
-I will take the time to do a full writeup in the coming weeks, but the project consists of the the following parts:
+The project consists of the the following parts:
 
 1) An Atmega 328p (the microcontroller on the Arduino Uno board) clocked at 16 MHz.
 2) A Sony SPC-700 sound module liberated from a functional SNES unit.
@@ -41,4 +41,3 @@ Known issues:
 The future:
 
 - Eventually, I'd like to complete everything in the TODO.txt list.
-- As previously mentioned, I will be posting a writeup on the construction of the device (complete with pictures and schematics). The timeframe on this is presently unknown, but I'll try to make it a priority.
