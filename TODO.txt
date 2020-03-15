@@ -1,7 +1,3 @@
-* Fix memory issues and uncomment portWriteMenu
-
-* Figure out why the annoying sample loops happen on uploading the bootloader
-
 * Implement basic menu (file select is only part of this!)
 
 

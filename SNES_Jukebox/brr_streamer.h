@@ -106,15 +106,11 @@ void streamBrrFile(File &file, Adafruit_ST7735 &lcd) {
 
   uint32_t nextBrrBlock = 0;
   for (uint32_t i = 0; i < brrBatchCount; i++) {
-    uint32_t nextBlockTransferCount = min(BRR_TRANSFER_BLOCK_COUNT, brrBlockCount - nextBrrBlock);
+    word nextBlockTransferCount = min(BRR_TRANSFER_BLOCK_COUNT, (word)min(brrBlockCount - nextBrrBlock, 65535));
     
     // Fetch the next BRR blocks
     beginSdRead();
-    for (int j = 0; j < nextBlockTransferCount; j++) {
-      for (int k = 0; k < 9; k++) {
-        buffer[j * 9 + k] = (byte)file.read();
-      }
-    }
+    file.read(buffer, nextBlockTransferCount * 9);
     endSdRead();
 
     uploadBrrBlock(buffer, nextBlockTransferCount);

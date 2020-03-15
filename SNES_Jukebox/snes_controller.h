@@ -24,6 +24,7 @@ public:
     this->latchPin = latchPin;
     this->clockPin = clockPin;
     this->dataPin = dataPin;
+    updateDelay = 0;
     controllerStatus = 0xFFFF;
     lastControllerStatus = 0xFFFF;
     
@@ -34,8 +35,12 @@ public:
     digitalWrite(clockPin, 0);
   }
   
-  void update() {
+  void update(byte debounceDelay) {
     lastControllerStatus = controllerStatus;
+    if (updateDelay > 0 && debounceDelay > 0) {
+      --updateDelay;
+      return;
+    }
 
     // Latch the data
     digitalWrite(latchPin, 1);
@@ -52,6 +57,8 @@ public:
       digitalWrite(clockPin, 1);
       digitalWrite(clockPin, 0);
     }
+    
+    updateDelay = debounceDelay;
   }
   
   bool isPressed(BUTTON button) {
@@ -76,6 +83,7 @@ private:
   byte latchPin;
   byte clockPin;
   byte dataPin;
+  byte updateDelay;
 
   word controllerStatus;
   word lastControllerStatus;

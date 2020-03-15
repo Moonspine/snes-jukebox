@@ -65,7 +65,7 @@ static PROGMEM prog_uchar DSPdata[] = {
 
 
 
-#define BRR_TRANSFER_BLOCK_COUNT 70
+#define BRR_TRANSFER_BLOCK_COUNT 50
 #define BRR_TRANSFER_BLOCK_SIZE BRR_TRANSFER_BLOCK_COUNT * 9
 
 static PROGMEM prog_uint8_t songLoaderData[] = {

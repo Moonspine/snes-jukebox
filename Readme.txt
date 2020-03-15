@@ -38,11 +38,6 @@ Converting music for streaming on the SPC-700:
  - This .brr file is the file you'll need to drop on the SD card to play on the jukebox.
 
 
-Known issues:
-
-- The port read/write menu is presently disabled due to memory issues. I will re-enable it upon completion of planned code cleanup and refactoring.
-
-
 The future:
 
 - Eventually, I'd like to complete everything in the TODO.txt list.

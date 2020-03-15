@@ -1,4 +1,3 @@
-#include <Firmata.h>
 #include <SPI.h>
 #include <SD.h>
 #include <Adafruit_GFX.h>
@@ -38,11 +37,13 @@
 
 unsigned char port0state;
 
+#define CONTROLLER_DEBOUNCE_DELAY 100
 #define FILES_PER_PAGE 15
+
 FileListMenu fileMenu(FILES_PER_PAGE);
 bool fileMenuInitialized = false;
 byte selectedFileIndex = 0;
-//PortWriteMenu portWriteMenu;
+PortWriteMenu portWriteMenu;
 byte currentMenu = 0;
 
 Adafruit_ST7735 lcd = Adafruit_ST7735(A3, A4, 8);
@@ -55,12 +56,11 @@ void readControllerState() {
   pinMode(A5, INPUT_PULLUP);
   digitalWrite(11, 0);
   digitalWrite(13, 0);
-  controller.update();
+  controller.update(currentMenu == 0 ? CONTROLLER_DEBOUNCE_DELAY : 0);
   setupAPUPins();
 }
 
-void setup()
-{
+void setup() {
   setupAPUPins();
   pinMode(A1, OUTPUT);
   digitalWrite(A1, HIGH);
@@ -72,20 +72,18 @@ void setup()
   endLcdWrite();
 }
 
-void startapuwrite(uint16_t address, prog_uchar *data, int len)
-{
+void startapuwrite(uint16_t address, prog_uchar *data, int len) {
   resetApu();
 
-  writedata(3,address>>8);
-  writedata(2,address&0xFF);
-  writedata(1,1);
-  writedata(0,0xCC);
-  while(readdata(0)!=0xCC);
-  for(int i=0;i<len;i++)
-  {
+  writedata(3, address >> 8);
+  writedata(2, address & 0xFF);
+  writedata(1, 1);
+  writedata(0, 0xCC);
+  while(readdata(0) != 0xCC);
+  for(int i = 0;i < len; i++) {
     writedata(1, pgm_read_byte(data + i));
-    writedata(0,i&0xFF);
-    while(readdata(0)!=(i&0xFF));
+    writedata(0,i & 0xFF);
+    while(readdata(0) != (i & 0xFF));
   }
 }
 
@@ -147,9 +145,7 @@ byte readSpcRamData(File &spcFile, SPCInfo &info, word address) {
  */
 byte readDspRamData(File &spcFile, byte *target) {
   seekIfNecessary(spcFile, DSP_RAM_START);
-  for (byte i = 0; i < 128; i++) {
-    target[i] = (byte)spcFile.read();
-  }
+  spcFile.read(target, 128);
   target[0x6C] = 0x60;
   target[0x4C] = 0x00;
 }
@@ -271,7 +267,7 @@ void uploadSpc(File &file) {
   writedata(3, info.getExtraData(3));
   
   // Update ports in the menu
-  //portWriteMenu.setLastWrittenPorts(info.getExtraData(0), info.getExtraData(1), info.getExtraData(2), info.getExtraData(3));
+  portWriteMenu.setLastWrittenPorts(info.getExtraData(0), info.getExtraData(1), info.getExtraData(2), info.getExtraData(3));
 }
 
 void uploadSpc(char *filename) {
@@ -396,7 +392,7 @@ void loop()
       fileMenuInitialized = true;
     }
   
-    if (controller.isPressed(SNESController::RIGHT) && !controller.wasPressed(SNESController::RIGHT)) {
+    if (controller.justPressed(SNESController::RIGHT)) {
       beginSdRead();
       bool pageChanged = fileMenu.nextPage();
       endSdRead();
@@ -411,14 +407,14 @@ void loop()
         
         drawMenu();
       }
-    } else if (controller.isPressed(SNESController::LEFT) && !controller.wasPressed(SNESController::LEFT)) {
+    } else if (controller.justPressed(SNESController::LEFT)) {
       beginSdRead();
       bool pageChanged = fileMenu.previousPage();
       endSdRead();
       if (pageChanged) {
         drawMenu();
       }
-    } else if (controller.isPressed(SNESController::UP) && !controller.wasPressed(SNESController::UP)) {
+    } else if (controller.justPressed(SNESController::UP)) {
       byte pageSize = fileMenu.getCurrentPageSize();
       if (selectedFileIndex > 0) {
         selectedFileIndex--;
@@ -426,13 +422,13 @@ void loop()
         selectedFileIndex = pageSize - 1;
       }
       drawFileSelection();
-    } else if (controller.isPressed(SNESController::DOWN) && !controller.wasPressed(SNESController::DOWN)) {
+    } else if (controller.justPressed(SNESController::DOWN)) {
       byte pageSize = fileMenu.getCurrentPageSize();
       selectedFileIndex = (selectedFileIndex + 1) % pageSize; 
       drawFileSelection();
     }
     
-    if (controller.isPressed(SNESController::A) && !controller.wasPressed(SNESController::A)) {
+    if (controller.justPressed(SNESController::A)) {
       beginSdRead();
       File f = fileMenu.getSelectedFile(selectedFileIndex);
       if (f) {
@@ -455,30 +451,30 @@ void loop()
           if (currentMenu == 0) {
             drawMenu();
           } else {
-            //portWriteMenu.drawMenu(lcd);
+            portWriteMenu.drawMenu(lcd);
           }
         }
       }
     }
     
-    if (controller.isPressed(SNESController::B) && !controller.wasPressed(SNESController::B)) {
+    if (controller.justPressed(SNESController::B)) {
       File newRoot = beginSdRead("/");
       fileMenu.initialize(newRoot);
       endSdRead();
       drawMenu();
     }
   } else if (currentMenu == 1) {
-    //portWriteMenu.update(lcd, controller);
+    portWriteMenu.update(lcd, controller);
   }
   
   // BEGIN DEBUG MENU SWAPPING CODE
   
   bool initMenu = false;
   const byte MENU_COUNT = 2;
-  if (controller.isPressed(SNESController::R) && !controller.wasPressed(SNESController::R)) {
+  if (controller.justPressed(SNESController::R)) {
     currentMenu = (currentMenu + 1) % MENU_COUNT;
     initMenu = true;
-  } else if (controller.isPressed(SNESController::L) && !controller.wasPressed(SNESController::L)) {
+  } else if (controller.justPressed(SNESController::L)) {
     --currentMenu;
     if (currentMenu > 1) currentMenu = 1;
     initMenu = true;
@@ -493,7 +489,7 @@ void loop()
         drawMenu();
       } break;
       case 1: {
-        //portWriteMenu.initialize(lcd);
+        portWriteMenu.initialize(lcd);
       } break;
       default: break;
     }
