@@ -95,49 +95,62 @@ void seekIfNecessary(File &file, uint32_t desiredPosition) {
   file.seek(desiredPosition);
 }
 
-byte readSpcRamData(File &spcFile, SPCInfo &info, word address) {
-  // Extra RAM
-  if (info.getShouldLoadExtraRAM() && address >= 0xFFC0) {
-    seekIfNecessary(spcFile, EXTRA_RAM_START + (uint32_t)(address - 0xFFC0));
-    return (byte)spcFile.read();
+word readSpcRamData(File &spcFile, SPCInfo &info, word startAddress, byte *out, word readCount) {
+  seekIfNecessary(spcFile, RAM_START + (uint32_t)startAddress);
+  
+  const word realReadCount = (word)min((uint32_t)readCount, (word)min(spcFile.size() - RAM_START - (uint32_t)startAddress, (uint32_t)65535));
+  spcFile.read(out, realReadCount);
+  
+  const uint32_t endAddress = (uint32_t)startAddress + (uint32_t)realReadCount;
+
+  // Load extra RAM
+  if (info.getShouldLoadExtraRAM() && endAddress > 0xFFC0) {
+    const word extraRamStart = max(startAddress, 0xFFC0);
+    seekIfNecessary(spcFile, EXTRA_RAM_START + (uint32_t)(extraRamStart - 0xFFC0));
+    spcFile.read(&out[extraRamStart - startAddress], 0xFFFF - extraRamStart + 1);
   }
   
-  // Bootloader code
-  if (address >= info.getBootLocation() && address < (info.getBootLocation() + info.getBootCount())) {
-    word bootAddress = address - info.getBootLocation();
-    switch (bootAddress) {
-      case 0x19: return info.getExtraData(0);
-      case 0x1F: return info.getExtraData(1);
-      case 0x25: return info.getExtraData(2);
-      case 0x2B: return info.getExtraData(3);
-      case 0x01: return info.getExtraData(4);
-      case 0x04: return info.getExtraData(5);
-      case 0x07: return info.getExtraData(6);
-      case 0x0A: return info.getExtraData(7);
-      case 0x0D: return info.getExtraData(8);
-      case 0x10: return info.getExtraData(9);
-      case 0x38: return info.getExtraData(10);
-      case 0x3E: return info.getExtraData(11);
-      case 0x41: return info.getExtraData(12);
-      case 0x44: return info.getSPLow();
-      case 0x47: return info.getPSW();
-      case 0x4b: return info.getA();
-      case 0x4d: return info.getY();
-      case 0x4f: return info.getX();
-      case 0x51: return info.getPCLow();
-      case 0x52: return info.getPCHigh();
-      default: return pgm_read_byte(bootloaderCode + bootAddress);
+  // Load bootloader code
+  const uint32_t bootStart = max(startAddress, info.getBootLocation());
+  const uint32_t bootEnd = min(endAddress, (uint32_t)(info.getBootLocation() + info.getBootCount()));
+  for (uint32_t i = bootStart; i < bootEnd; ++i) {
+    const word bootOffset = i - info.getBootLocation();
+    const word outOffset = i - startAddress;
+    switch (bootOffset) {
+      case 0x19: out[outOffset] = info.getExtraData(0); break;
+      case 0x1F: out[outOffset] = info.getExtraData(1); break;
+      case 0x25: out[outOffset] = info.getExtraData(2); break;
+      case 0x2B: out[outOffset] = info.getExtraData(3); break;
+      case 0x01: out[outOffset] = info.getExtraData(4); break;
+      case 0x04: out[outOffset] = info.getExtraData(5); break;
+      case 0x07: out[outOffset] = info.getExtraData(6); break;
+      case 0x0A: out[outOffset] = info.getExtraData(7); break;
+      case 0x0D: out[outOffset] = info.getExtraData(8); break;
+      case 0x10: out[outOffset] = info.getExtraData(9); break;
+      case 0x38: out[outOffset] = info.getExtraData(10); break;
+      case 0x3E: out[outOffset] = info.getExtraData(11); break;
+      case 0x41: out[outOffset] = info.getExtraData(12); break;
+      case 0x44: out[outOffset] = info.getSPLow(); break;
+      case 0x47: out[outOffset] = info.getPSW(); break;
+      case 0x4b: out[outOffset] = info.getA(); break;
+      case 0x4d: out[outOffset] = info.getY(); break;
+      case 0x4f: out[outOffset] = info.getX(); break;
+      case 0x51: out[outOffset] = info.getPCLow(); break;
+      case 0x52: out[outOffset] = info.getPCHigh(); break;
+      default: out[outOffset] = pgm_read_byte(bootloaderCode + bootOffset); break;
     }
   }
   
-  // Echo region
-  if (info.getEchoEnabled() && address >= info.getEchoRegion() && address < (info.getEchoRegion() + info.getEchoSize())) {
-    return 0;
+  // Silence echo region
+  if (info.getEchoEnabled()) {
+    const uint32_t echoStart = max(startAddress, info.getEchoRegion());
+    const uint32_t echoEnd = min(endAddress, (uint32_t)(info.getEchoRegion() + info.getEchoSize()));
+    for (uint32_t i = echoStart; i < echoEnd; ++i) {
+      out[i - startAddress] = 0;
+    }
   }
   
-  // If no special RAM re-mapping is to be done, just load the byte
-  seekIfNecessary(spcFile, RAM_START + (uint32_t)address);
-  return (byte)spcFile.read();
+  return realReadCount;
 }
 
 /**
@@ -225,9 +238,7 @@ void uploadSpc(File &file) {
   // Read some data from the SD card
   beginSdRead();
   readDspRamData(file, &buffer[0]);
-  for (word i = 0; i < SPC_UPLOAD_BUFFER_SIZE - 128; i++) {
-    buffer[128 + i] = readSpcRamData(file, info, i);
-  }
+  readSpcRamData(file, info, 0, &buffer[128], SPC_UPLOAD_BUFFER_SIZE - 128);
   endSdRead();
 
   // Initialize
@@ -241,9 +252,7 @@ void uploadSpc(File &file) {
   for (uint32_t i = 0x180; i < 0x10000; i += SPC_UPLOAD_BUFFER_SIZE) {
     // Read more data from the card
     beginSdRead();
-    for (uint32_t j = 0; j < SPC_UPLOAD_BUFFER_SIZE && i + j < 0x10000; j++) {
-      buffer[j] = readSpcRamData(file, info, (word)(j + i));
-    }
+    readSpcRamData(file, info, (word)i, buffer, min(SPC_UPLOAD_BUFFER_SIZE, (word)(0x10000 - i)));
     endSdRead();
     
     // Write data to the SPC 700
