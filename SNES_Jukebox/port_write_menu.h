@@ -6,16 +6,17 @@
 #include "lcd_draw.h"
 #include "snes_controller.h"
 
-static PROGMEM prog_uchar READS_Y[] = { 50 };
-static PROGMEM prog_uchar WRITES_Y[] = { 110 };
-static PROGMEM prog_uint16_t INITIAL_REPEAT_DELAY[] = { 500 };
-static PROGMEM prog_uint16_t REPEAT_DELAY[] = { 150 };
+#define READS_Y 50
+#define WRITES_Y 110
+#define INITIAL_REPEAT_DELAY 500
+#define REPEAT_DELAY 150
 
 class PortWriteMenu {
 public:
 
   PortWriteMenu() {
     currentSelection = 0;
+    debounceDelay = 0;
   }
   
   void setLastWrittenPorts(byte port0, byte port1, byte port2, byte port3) {
@@ -38,13 +39,13 @@ public:
     drawText(lcd, "Currently written", 0, 70);
     drawText(lcd, "Orig:", 0, 80);
     drawText(lcd, "Last:", 0, 90);
-    drawText(lcd, "Write:", 0, pgm_read_byte(WRITES_Y));
+    drawText(lcd, "Write:", 0, WRITES_Y);
     endLcdWrite();
     
-    drawPortReads(lcd, pgm_read_byte(READS_Y));
+    drawPortReads(lcd, READS_Y, true);
     drawOriginalPorts(lcd, 80);
     drawLastWritten(lcd, 90);
-    drawWritingPorts(lcd, pgm_read_byte(WRITES_Y));
+    drawWritingPorts(lcd, WRITES_Y);
     
     // - Port write menu -
     //
@@ -62,24 +63,52 @@ public:
   }
   
   void update(Adafruit_ST7735 &lcd, SNESController &controller) {
-    drawPortReads(lcd, pgm_read_byte(READS_Y));
+    drawPortReads(lcd, READS_Y, false);
     
-    // Update selection stuff
-    if (controller.justPressed(SNESController::UP)) {
-      currentlyWritingPorts[currentSelection]++;
-      drawWritingPorts(lcd, pgm_read_byte(WRITES_Y));
-      lastRepeatTimestamp = millis() & 0xffff;
-      timeUntilRepeat = pgm_read_word(INITIAL_REPEAT_DELAY);
-    } else if (controller.justPressed(SNESController::DOWN)) {
-      currentlyWritingPorts[currentSelection]--;
-      drawWritingPorts(lcd, pgm_read_byte(WRITES_Y));
-      lastRepeatTimestamp = millis() & 0xffff;
-      timeUntilRepeat = pgm_read_word(INITIAL_REPEAT_DELAY);
-    } else if (controller.justPressed(SNESController::LEFT)) {
-      --currentSelection;
-      if (currentSelection > 3) currentSelection = 3;
-    } else if (controller.justPressed(SNESController::RIGHT)) {
-      currentSelection = (currentSelection + 1) % 4;
+    if (debounceDelay > 0) {
+      --debounceDelay;
+    }
+    
+    const byte increment = controller.isPressed(SNESController::X) ? 16 : 1;
+    if (debounceDelay == 0) {
+      // Update selection stuff
+      if (controller.justPressed(SNESController::UP)) {
+        currentlyWritingPorts[currentSelection] += increment;
+        drawWritingPorts(lcd, WRITES_Y);
+        lastRepeatTimestamp = millis() & 0xffff;
+        timeUntilRepeat = INITIAL_REPEAT_DELAY;
+        debounceDelay = CONTROLLER_DEBOUNCE_DELAY;
+      } else if (controller.justPressed(SNESController::DOWN)) {
+        currentlyWritingPorts[currentSelection] -= increment;
+        drawWritingPorts(lcd, WRITES_Y);
+        lastRepeatTimestamp = millis() & 0xffff;
+        timeUntilRepeat = INITIAL_REPEAT_DELAY;
+        debounceDelay = CONTROLLER_DEBOUNCE_DELAY;
+      } else if (controller.justPressed(SNESController::LEFT)) {
+        --currentSelection;
+        if (currentSelection > 3) currentSelection = 3;
+        debounceDelay = CONTROLLER_DEBOUNCE_DELAY;
+      } else if (controller.justPressed(SNESController::RIGHT)) {
+        currentSelection = (currentSelection + 1) % 4;
+        debounceDelay = CONTROLLER_DEBOUNCE_DELAY;
+      }
+      
+      drawSelectionReticule(lcd, WRITES_Y);
+      
+      if (controller.justPressed(SNESController::A)) {
+        writedata(currentSelection, currentlyWritingPorts[currentSelection]);
+        lastWrittenPorts[currentSelection] = currentlyWritingPorts[currentSelection];
+        drawLastWritten(lcd, 90);
+        debounceDelay = CONTROLLER_DEBOUNCE_DELAY;
+      } else if (controller.justPressed(SNESController::Y)) {
+        writedata(currentSelection, currentlyWritingPorts[currentSelection]);
+        drawTemporaryWritingPorts(lcd, 90);
+        debounceDelay = CONTROLLER_DEBOUNCE_DELAY;
+      } else if (controller.justPressed(SNESController::B)) {
+        currentlyWritingPorts[currentSelection] = lastWrittenPorts[currentSelection];
+        drawWritingPorts(lcd, WRITES_Y);
+        debounceDelay = CONTROLLER_DEBOUNCE_DELAY;
+      }
     }
     
     if (controller.isPressed(SNESController::UP) || controller.isPressed(SNESController::DOWN)) {
@@ -88,44 +117,37 @@ public:
       timeUntilRepeat -= currentRepeatTimestamp - lastRepeatTimestamp;
       if (timeUntilRepeat < 0) {
         if (controller.isPressed(SNESController::UP)) {
-          currentlyWritingPorts[currentSelection]++;
-          drawWritingPorts(lcd, pgm_read_byte(WRITES_Y));
+          currentlyWritingPorts[currentSelection] += increment;
+          drawWritingPorts(lcd, WRITES_Y);
         } else {
-          currentlyWritingPorts[currentSelection]--;
-          drawWritingPorts(lcd, pgm_read_byte(WRITES_Y));
+          currentlyWritingPorts[currentSelection] -= increment;
+          drawWritingPorts(lcd, WRITES_Y);
         }
-        timeUntilRepeat = pgm_read_word(REPEAT_DELAY);
+        timeUntilRepeat = REPEAT_DELAY;
       }
       
       lastRepeatTimestamp = currentRepeatTimestamp;
     }
     
-    drawSelectionReticule(lcd, pgm_read_byte(WRITES_Y));
-    
-    if (controller.justPressed(SNESController::A)) {
-      writedata(currentSelection, currentlyWritingPorts[currentSelection]);
-      lastWrittenPorts[currentSelection] = currentlyWritingPorts[currentSelection];
-      drawLastWritten(lcd, 90);
-    } else if (controller.justPressed(SNESController::Y)) {
-      writedata(currentSelection, currentlyWritingPorts[currentSelection]);
-      drawTemporaryWritingPorts(lcd, 90);
-    } else if (controller.justReleased(SNESController::Y)) {
+    if (controller.justReleased(SNESController::Y)) {
       writedata(currentSelection, lastWrittenPorts[currentSelection]);
       drawLastWritten(lcd, 90);
+      debounceDelay = CONTROLLER_DEBOUNCE_DELAY;
     }
-    
   }
 
 private:
 
   byte currentSelection;
   
+  byte lastPortReads[4];
   byte originalPorts[4];
   byte lastWrittenPorts[4];
   byte currentlyWritingPorts[4];
   
   word lastRepeatTimestamp;
   int timeUntilRepeat;
+  byte debounceDelay;
   
   void drawPorts(Adafruit_ST7735 &lcd, byte y, const byte *ports) {
     beginLcdWrite();
@@ -137,13 +159,21 @@ private:
     endLcdWrite();
   }
   
-  void drawPortReads(Adafruit_ST7735 &lcd, byte y) {
+  void drawPortReads(Adafruit_ST7735 &lcd, byte y, bool forceRedraw) {
     byte reads[4];
     
+    bool shouldRedraw = forceRedraw;
     for (byte i = 0; i < 4; i++) {
-      reads[i] = readdata(i);
+      byte newData = readdata(i);
+      if (newData != lastPortReads[i]) {
+        shouldRedraw = true;
+        lastPortReads[i] = newData;
+      }
     }
-    drawPorts(lcd, y, reads);
+    
+    if (shouldRedraw) {
+      drawPorts(lcd, y, lastPortReads);
+    }
   }
   
   void drawLastWritten(Adafruit_ST7735 &lcd, byte y) {

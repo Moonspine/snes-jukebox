@@ -37,7 +37,6 @@
 
 unsigned char port0state;
 
-#define CONTROLLER_DEBOUNCE_DELAY 100
 #define FILES_PER_PAGE 15
 
 FileListMenu fileMenu(FILES_PER_PAGE);

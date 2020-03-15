@@ -1,6 +1,8 @@
 #ifndef DEFINES_H
 #define DEFINES_H
 
+#define CONTROLLER_DEBOUNCE_DELAY 100
+
 #define REGISTERS_START (uint32_t)0x25
 #define RAM_START       (uint32_t)0x100
 #define DSP_RAM_START   (uint32_t)0x10100
