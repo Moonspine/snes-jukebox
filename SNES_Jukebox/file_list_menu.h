@@ -28,8 +28,9 @@ public:
       f.close();
       
       totalFileCount++;
-      if (totalFileCount % filesPerPage == 0)
+      if (totalFileCount % filesPerPage == 0) {
         pageCount++;
+      }
       
       f = root.openNextFile();
     }
@@ -55,7 +56,9 @@ public:
   }
   
   void resetPage() {
-    if (currentFile == 0) return;
+    if (currentFile == 0) {
+      return;
+    }
     
     root.rewindDirectory();
     for (int i = 0; i < currentPage; i++) {
@@ -68,7 +71,9 @@ public:
   }
 
   bool previousPage() {
-    if (currentPage == 0) return false;
+    if (currentPage == 0) {
+      return false;
+    }
     
     currentPage--;
     resetPage();
@@ -77,7 +82,9 @@ public:
   }
   
   bool nextPage() {
-    if (currentPage + 1 == pageCount) return false;
+    if (currentPage + 1 == pageCount) {
+      return false;
+    }
     
     char temp[13];
     bool temp2;
@@ -105,8 +112,9 @@ public:
   }
   
   byte getCurrentPageSize() {
-    if (currentPage + 1 < pageCount)
+    if (currentPage + 1 < pageCount) {
       return filesPerPage;
+    }
     return totalFileCount % filesPerPage;
   }
 

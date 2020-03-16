@@ -386,8 +386,7 @@ void drawMenu() {
   drawFileSelection();
 }
 
-void loop()
-{
+void loop() {
   readControllerState();
   
   if (currentMenu == 0) {
@@ -491,9 +490,6 @@ void loop()
   if (initMenu) {
     switch (currentMenu) {
       case 0: {
-        //File newRoot = beginSdRead("/");
-        //fileMenu.initialize(newRoot);
-        //endSdRead();
         drawMenu();
       } break;
       case 1: {

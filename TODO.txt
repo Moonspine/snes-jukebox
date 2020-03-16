@@ -1,34 +1,8 @@
-* Implement basic menu (file select is only part of this!)
-
-
 * Address speed of FileListMenu::countFiles()
  - Remove this and replace it with dynamic counting?
-
-* Mode switch function
- - Switch between SD, LCD, APU, and Controller
 
 * Confirm SPC file upload?
  - Screen would show info on the song before upload
 
-* Load cover art from SD card
-
-* Get better icons for file selection menu
- - 8x8? (16-bit 565 color)
- - Needed icons:
-   - Folder
-   - SPC File
-   - Non-SPC File
-   - Selection Reticule
-   - A/B/X/Y/Start/Select
-
 * Bigger, better menu system
- - Direct port write menu
-   - "Set" and "one-shot" modes
-   - Write more than one port at once?
  - SPC Info ("Now Playing")
-
-* Progress bar for SPC uploads
-
-
-Other considerations
- - SPC/LCD SPI speed
