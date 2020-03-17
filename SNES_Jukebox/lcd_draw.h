@@ -20,6 +20,16 @@ void drawText(Adafruit_ST7735 &lcd, const char *text, int x,  int y) {
   drawText(lcd, text, x, y, false);
 }
 
+void drawPgmText(Adafruit_ST7735 &lcd, const char *text, int x,  int y, bool inverted) {
+  byte buffer[MAX_PGM_TEXT_LENGTH + 1];
+  copyPgmString(text, buffer, MAX_PGM_TEXT_LENGTH + 1);
+  drawText(lcd, (const char *) buffer, x, y, inverted);
+}
+
+void drawPgmText(Adafruit_ST7735 &lcd, const char *text, int x,  int y) {
+  drawPgmText(lcd, text, x, y, false);
+}
+
 void drawByte(Adafruit_ST7735 &lcd, byte data, int x, int y) {
   char text[4] = { ' ', ' ', ' ', '\0' };
   

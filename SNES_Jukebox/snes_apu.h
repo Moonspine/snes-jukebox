@@ -1,8 +1,7 @@
 #ifndef SNES_APU_H
 #define SNES_APU_H
 
-unsigned char readdata(unsigned char address)
-{
+unsigned char readdata(unsigned char address) {
   unsigned char data;
 
   DDRB = 0x0F;
@@ -18,8 +17,7 @@ unsigned char readdata(unsigned char address)
   return data;
 }
 
-void writedata(unsigned char address, unsigned char data)
-{
+void writedata(unsigned char address, unsigned char data) {
   DDRB = 0x3F;
   DDRD |= 0xFC;
 

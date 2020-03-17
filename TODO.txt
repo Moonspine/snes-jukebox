@@ -1,8 +1,0 @@
-* Address speed of FileListMenu::countFiles()
- - Remove this and replace it with dynamic counting?
-
-* Confirm SPC file upload?
- - Screen would show info on the song before upload
-
-* Bigger, better menu system
- - SPC Info ("Now Playing")

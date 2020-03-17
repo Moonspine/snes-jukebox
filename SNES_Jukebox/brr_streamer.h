@@ -2,6 +2,7 @@
 #define BRR_STREAMER_H
 
 #include <SD.h>
+#include "text.h"
 #include "lcd_draw.h"
 #include "snes_apu.h"
 #include "jukebox_io.h"
@@ -39,7 +40,7 @@ void endApuBlockWrite(word executionAddress) {
 void uploadBrrSongLoader(Adafruit_ST7735 &lcd) {
   beginLcdWrite();
   clearLcd(lcd);
-  drawText(lcd, "Upoading loader...", 0, 0);
+  drawPgmText(lcd, TEXT_UPLOADING_LOADER, 0, 0);
   endLcdWrite();
   
   prog_uint8_t *loaderData = songLoaderData;
@@ -52,7 +53,7 @@ void uploadBrrSongLoader(Adafruit_ST7735 &lcd) {
 
   beginLcdWrite();
   clearLcd(lcd);
-  drawText(lcd, "Loader uploaded!", 0, 0);
+  drawPgmText(lcd, TEXT_LOADER_UPLOADED, 0, 0);
   endLcdWrite();
 }
 
@@ -95,7 +96,7 @@ void streamBrrFile(File &file, Adafruit_ST7735 &lcd) {
   
   beginLcdWrite();
   clearLcd(lcd);
-  drawText(lcd, "Streaming:", 0, 0);
+  drawPgmText(lcd, TEXT_STREAMING, 0, 0);
   drawText(lcd, file.name(), 0, 10);
   endLcdWrite();
   

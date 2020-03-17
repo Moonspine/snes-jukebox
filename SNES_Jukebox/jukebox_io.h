@@ -24,6 +24,8 @@ void setupAPUPins() {
 
 void beginSdRead() {
   digitalWrite(A2, HIGH);
+  pinMode(11, OUTPUT);
+  pinMode(13, OUTPUT);
   SD.begin(A1);
 }
 
@@ -46,6 +48,11 @@ void endSdRead(File f) {
 
 void beginLcdWrite() {
   digitalWrite(A2, HIGH);
+  pinMode(A3, OUTPUT);
+  pinMode(A4, OUTPUT);
+  pinMode(8, OUTPUT);
+  pinMode(11, OUTPUT);
+  pinMode(13, OUTPUT);
   SPI.begin();
 }
 

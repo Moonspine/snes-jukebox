@@ -3,6 +3,7 @@
 
 #include "jukebox_io.h"
 #include "snes_apu.h"
+#include "text.h"
 #include "lcd_draw.h"
 #include "snes_controller.h"
 
@@ -33,13 +34,13 @@ public:
   void drawMenu(Adafruit_ST7735 &lcd) {
     beginLcdWrite();
     clearLcd(lcd);
-    drawText(lcd, "- Port write menu -", 0, 0);
-    drawText(lcd, "Port#   0  1  2  3", 0, 20);
-    drawText(lcd, "Currently reading", 0, 40);
-    drawText(lcd, "Currently written", 0, 70);
-    drawText(lcd, "Orig:", 0, 80);
-    drawText(lcd, "Last:", 0, 90);
-    drawText(lcd, "Write:", 0, WRITES_Y);
+    drawPgmText(lcd, TEXT_PORT_WRITE_MENU, 0, 0);
+    drawPgmText(lcd, TEXT_PORT_NUMBERS, 0, 20);
+    drawPgmText(lcd, TEXT_CURRENTLY_READING, 0, 40);
+    drawPgmText(lcd, TEXT_CURRENTLY_WRITTEN, 0, 70);
+    drawPgmText(lcd, TEXT_CURRENTLY_ORIGINAL, 0, 80);
+    drawPgmText(lcd, TEXT_CURRENTLY_LAST, 0, 90);
+    drawPgmText(lcd, TEXT_CURRENTLY_WRITE, 0, WRITES_Y);
     endLcdWrite();
     
     drawPortReads(lcd, READS_Y, true);

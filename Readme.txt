@@ -40,4 +40,4 @@ Converting music for streaming on the SPC-700:
 
 The future:
 
-- Eventually, I'd like to complete everything in the TODO.txt list.
+- I'd like to convert this to the latest Arduino release, if possible.
