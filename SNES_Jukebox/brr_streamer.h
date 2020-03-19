@@ -15,25 +15,27 @@ void beginApuBlockWrite(word address) {
   writedata(2, address & 0xFF);
   writedata(1, 1);
   writedata(0, 0xCC);
-  while(readdata(0)!=0xCC);
+  while(readdata(0) != 0xCC) {}
   port0statebrr = 0;
 }
 
 void writeApuByte(byte data) {
   writedata(1, data);
   writedata(0, port0statebrr);
-  while (readdata(0) != port0statebrr);
-  port0statebrr++;
+  while (readdata(0) != port0statebrr) {}
+  ++port0statebrr;
 }
 
 void endApuBlockWrite(word executionAddress) {
   writedata(3, executionAddress >> 8);
   writedata(2, executionAddress & 0xFF);
   byte p0 = readdata(0) + 2;
-  if (p0 == 0) p0++;
+  if (p0 == 0) {
+    ++p0;
+  }
   writedata(1, 0);
   writedata(0, p0);
-  while(readdata(1) != 0xEF);
+  while(readdata(1) != 0xEF) {}
 }
 
 
@@ -46,7 +48,7 @@ void uploadBrrSongLoader(Adafruit_ST7735 &lcd) {
   prog_uint8_t *loaderData = songLoaderData;
   resetApu();
   beginApuBlockWrite(0x200);
-  for (int i = 0; i < SONG_LOADER_DATA_LENGTH; i++) {
+  for (int i = 0; i < SONG_LOADER_DATA_LENGTH; ++i) {
     writeApuByte(pgm_read_byte(loaderData++));
   }
   endApuBlockWrite(0x200);
@@ -70,7 +72,7 @@ void uploadBrrBlock(byte *buffer, int count) {
   while(readdata(1) != 0xEF) {};
 
   // Write out the BRR data
-  for (uint32_t j = 0; j < count; j++) {
+  for (uint32_t j = 0; j < count; ++j) {
     bool blockEnd = j == count - 1;
     
     byte *brrData = &buffer[j * 9];
@@ -106,7 +108,7 @@ void streamBrrFile(File &file, Adafruit_ST7735 &lcd) {
   uint32_t brrBatchCount = brrBlockCount / BRR_TRANSFER_BLOCK_COUNT;
 
   uint32_t nextBrrBlock = 0;
-  for (uint32_t i = 0; i < brrBatchCount; i++) {
+  for (uint32_t i = 0; i < brrBatchCount; ++i) {
     word nextBlockTransferCount = min(BRR_TRANSFER_BLOCK_COUNT, (word)min(brrBlockCount - nextBrrBlock, 65535));
     
     // Fetch the next BRR blocks
@@ -120,7 +122,7 @@ void streamBrrFile(File &file, Adafruit_ST7735 &lcd) {
   
   // Upload the terminator
   buffer[0] = 0x03;
-  for (int i = 1; i <= 8; i++) {
+  for (int i = 1; i <= 8; ++i) {
     buffer[i] = 0x02;
   }
   uploadBrrBlock(buffer, 1);

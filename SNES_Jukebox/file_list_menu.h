@@ -55,7 +55,7 @@ public:
       }
     } else if (controller.justPressed(SNESController::UP)) {
       if (selectedFileIndex > 0) {
-        selectedFileIndex--;
+        --selectedFileIndex;
       } else {
         selectedFileIndex = getCurrentPageSize() - 1;
       }
@@ -153,19 +153,15 @@ public:
       // Call readNextFile() until at end of page
     }
     
-    //if (readNextFile(temp, temp2)) {
-      currentFileIndexOffset += filesPerPage;
-      return true;
-    //}
-    
-    //return false;
+    currentFileIndexOffset += filesPerPage;
+    return true;
   }
 
   File getSelectedFile(byte selectedIndex) {
     resetPage();
     char temp[13];
     bool temp2;
-    for (byte b = 0; b < selectedIndex; b++) {
+    for (byte b = 0; b < selectedIndex; ++b) {
       readNextFile(temp, temp2);
     }
     File result;
@@ -185,7 +181,7 @@ public:
     endSdRead();
     
     char filename[13];
-    for (byte i = 0; i < filesPerPage; i++) {
+    for (byte i = 0; i < filesPerPage; ++i) {
       beginSdRead();
       bool isDirectory;
       bool readNext = readNextFile(filename, isDirectory);
@@ -270,17 +266,25 @@ private:
   bool isSpcFile(const char *filename) {
     // Locate dot index
     int dotIndex = -1;
-    for (int i = 0; i <= 8 && dotIndex < 0; i++) {
+    for (int i = 0; i <= 8 && dotIndex < 0; ++i) {
       if (filename[i] == '.') {
         dotIndex = i;
       }
     }
-    if (dotIndex < 0) return false;
+    if (dotIndex < 0) {
+      return false;
+    }
     
     // Test file extension
-    if (filename[dotIndex + 1] != 's' && filename[dotIndex + 1] != 'S') return false;
-    if (filename[dotIndex + 2] != 'p' && filename[dotIndex + 2] != 'P') return false;
-    if (filename[dotIndex + 3] != 'c' && filename[dotIndex + 3] != 'C') return false;
+    if (filename[dotIndex + 1] != 's' && filename[dotIndex + 1] != 'S') {
+      return false;
+    }
+    if (filename[dotIndex + 2] != 'p' && filename[dotIndex + 2] != 'P') {
+      return false;
+    }
+    if (filename[dotIndex + 3] != 'c' && filename[dotIndex + 3] != 'C') {
+      return false;
+    }
     
     // SPC file!
     return true;
@@ -294,7 +298,7 @@ private:
   bool isBrrFile(const char *filename) {
     // Locate dot index
     int dotIndex = -1;
-    for (int i = 0; i <= 8 && dotIndex < 0; i++) {
+    for (int i = 0; i <= 8 && dotIndex < 0; ++i) {
       if (filename[i] == '.') {
         dotIndex = i;
       }
@@ -302,9 +306,15 @@ private:
     if (dotIndex < 0) return false;
     
     // Test file extension
-    if (filename[dotIndex + 1] != 'b' && filename[dotIndex + 1] != 'B') return false;
-    if (filename[dotIndex + 2] != 'r' && filename[dotIndex + 2] != 'R') return false;
-    if (filename[dotIndex + 3] != 'r' && filename[dotIndex + 3] != 'R') return false;
+    if (filename[dotIndex + 1] != 'b' && filename[dotIndex + 1] != 'B') {
+      return false;
+    }
+    if (filename[dotIndex + 2] != 'r' && filename[dotIndex + 2] != 'R') {
+      return false;
+    }
+    if (filename[dotIndex + 3] != 'r' && filename[dotIndex + 3] != 'R') {
+      return false;
+    }
     
     // SPC file!
     return true;
@@ -366,10 +376,12 @@ private:
     writedata(3, info.getBootLocation() >> 8);
     writedata(2, info.getBootLocation() & 0xFF);
     byte p0 = readdata(0) + 2;
-    if (p0 == 0) p0++;
+    if (p0 == 0) {
+      ++p0;
+    }
     writedata(1, 0);
     writedata(0, p0);
-    while(readdata(0) != 0x53);
+    while(readdata(0) != 0x53) {}
     
     // Write input ports of SPC
     writedata(0, info.getExtraData(0));

@@ -20,8 +20,9 @@ public:
   
   void addProgress(uint32_t newProgress) {
     currentProgress += newProgress;
-    if (currentProgress > maxProgress)
+    if (currentProgress > maxProgress) {
       currentProgress = maxProgress;
+    }
     
     int lastProgressWidth = (int)floor(((float)lastProgress / maxProgress) * (width - 2));
     int currentProgressWidth = (int)floor(((float)currentProgress / maxProgress) * (width - 2));

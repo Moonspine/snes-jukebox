@@ -87,7 +87,9 @@ public:
         debounceDelay = CONTROLLER_DEBOUNCE_DELAY;
       } else if (controller.justPressed(SNESController::LEFT)) {
         --currentSelection;
-        if (currentSelection > 3) currentSelection = 3;
+        if (currentSelection > 3) {
+          currentSelection = 3;
+        }
         debounceDelay = CONTROLLER_DEBOUNCE_DELAY;
       } else if (controller.justPressed(SNESController::RIGHT)) {
         currentSelection = (currentSelection + 1) % 4;
@@ -164,7 +166,7 @@ private:
     byte reads[4];
     
     bool shouldRedraw = forceRedraw;
-    for (byte i = 0; i < 4; i++) {
+    for (byte i = 0; i < 4; ++i) {
       byte newData = readdata(i);
       if (newData != lastPortReads[i]) {
         shouldRedraw = true;
@@ -191,7 +193,7 @@ private:
   
   void drawTemporaryWritingPorts(Adafruit_ST7735 &lcd, byte y) {
     byte values[4];
-    for (byte i = 0; i < 4; i++) {
+    for (byte i = 0; i < 4; ++i) {
       if (i == currentSelection) {
         values[i] = currentlyWritingPorts[i];
       } else {
@@ -203,7 +205,7 @@ private:
   
   void drawSelectionReticule(Adafruit_ST7735 &lcd, byte y) {
     beginLcdWrite();
-    for (byte i = 0; i < 4; i++) {
+    for (byte i = 0; i < 4; ++i) {
       word color = (i == currentSelection) ? ST7735_BLUE : ST7735_BLACK;
       lcd.drawRect(40 + i * 18 - 2, y - 2, 16, 14, color);
     }

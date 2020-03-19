@@ -10,16 +10,18 @@ void startapuwrite(uint16_t address, prog_uchar *data, int len) {
   writedata(2, address & 0xFF);
   writedata(1, 1);
   writedata(0, 0xCC);
-  while(readdata(0) != 0xCC);
-  for(int i = 0;i < len; i++) {
+  while(readdata(0) != 0xCC) {}
+  for(int i = 0;i < len; ++i) {
     writedata(1, pgm_read_byte(data + i));
-    writedata(0,i & 0xFF);
+    writedata(0, i & 0xFF);
     while(readdata(0) != (i & 0xFF));
   }
 }
 
 void seekIfNecessary(File &file, uint32_t desiredPosition) {
-  if (file.position() == desiredPosition) return;
+  if (file.position() == desiredPosition) {
+    return;
+  }
   file.seek(desiredPosition);
 }
 
@@ -99,26 +101,26 @@ void startSpc700(byte *data) {
   writedata(0, 0x11);
   while(readdata(0) != 0x11);
   port0state = 0;
-  for (int i = 0; i < 128; i++)
-  {
+  for (int i = 0; i < 128; ++i) {
     writedata(1, data[i]);
     writedata(0, port0state);
-    if(i < 127)
+    if(i < 127) {
       while(readdata(0) != port0state);
-    port0state++;
+    }
+    ++port0state;
   }
-  while(readdata(0) != 0xAA);
+  while(readdata(0) != 0xAA) {}
   port0state = 0;
   writedata(2, 0x02);
   writedata(3, 0x00);
   writedata(1, 0x01);
   writedata(0, 0xCC);
-  while(readdata(0) != 0xCC);
-  for(int i = 2; i < 0xF0; i++) {
+  while(readdata(0) != 0xCC) {}
+  for(int i = 2; i < 0xF0; ++i) {
     writedata(1, data[i + 128]);
     writedata(0, port0state);
-    while(readdata(0) != port0state);
-    port0state++;
+    while(readdata(0) != port0state) {}
+    ++port0state;
   }
 }
 
@@ -130,16 +132,16 @@ void beginBlockWrite(word address) {
   byte i = readdata(0);
   i += 2;
   writedata(0, i);
-  while(readdata(0) != i);
+  while(readdata(0) != i) {}
   port0state = 0;
 }
 
 void writeBytes(byte *data, word count) {
-  for(int i = 0; i < count; i++) {
+  for(int i = 0; i < count; ++i) {
     writedata(1, data[i]);
     writedata(0, port0state);
-    while (readdata(0) != port0state);
-    port0state++;
+    while (readdata(0) != port0state) {}
+    ++port0state;
   }
 }
 

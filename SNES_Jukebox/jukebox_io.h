@@ -1,32 +1,44 @@
 #ifndef JUKEBOX_IO_H
 #define JUKEBOX_IO_H
 
+#include "pin_defs.h"
+
 void setupAPUPins() {
-  PORTB = 0x0F;
-  DDRB = 0x0F;
-  PORTC = 0x01;
-  DDRC = 0x01;
+  // Prepare I/O pins
+  pinMode(PIN_LCD_CLK, INPUT_PULLUP);
+  pinMode(PIN_LCD_C_D, INPUT_PULLUP);
+  pinMode(PIN_LCD_CS, INPUT_PULLUP);
+  
+  pinMode(PIN_SD_MISO, INPUT_PULLUP);
+  pinMode(PIN_SD_CS, INPUT_PULLUP);
+  
+  pinMode(PIN_CONTROLLER_DATA, INPUT_PULLUP);
+  
+  PORT_DIR_APU_D0_1_CTRL |= 0x0F;
+  PORT_OUT_APU_D0_1_CTRL |= 0x0F;
+  pinMode(PIN_APU_RST, OUTPUT);
+  digitalWrite(PIN_APU_RST, HIGH);
   
   // Deselect SD card
-  pinMode(A1, OUTPUT);
-  digitalWrite(A1, HIGH);
+  pinMode(PIN_SD_CS, OUTPUT);
+  digitalWrite(PIN_SD_CS, HIGH);
   
   // Select APU
-  pinMode(A2, OUTPUT);
-  digitalWrite(A2, LOW);
+  pinMode(PIN_APU_A7, OUTPUT);
+  digitalWrite(PIN_APU_A7, LOW);
   
   // LCD init
-  pinMode(A3, OUTPUT);
-  digitalWrite(A3, HIGH);
-  pinMode(A4, OUTPUT);
-  digitalWrite(A4, LOW);
+  pinMode(PIN_LCD_CS, OUTPUT);
+  digitalWrite(PIN_LCD_CS, HIGH);
+  pinMode(PIN_LCD_C_D, OUTPUT);
+  digitalWrite(PIN_LCD_C_D, LOW);
 }
 
 void beginSdRead() {
-  digitalWrite(A2, HIGH);
-  pinMode(11, OUTPUT);
-  pinMode(13, OUTPUT);
-  SD.begin(A1);
+  digitalWrite(PIN_APU_A7, HIGH);
+  pinMode(PIN_SD_MOSI, OUTPUT);
+  pinMode(PIN_SD_CLK, OUTPUT);
+  SD.begin(PIN_SD_CS);
 }
 
 File beginSdRead(char *filename) {
@@ -45,14 +57,13 @@ void endSdRead(File f) {
 }
 
 
-
 void beginLcdWrite() {
-  digitalWrite(A2, HIGH);
-  pinMode(A3, OUTPUT);
-  pinMode(A4, OUTPUT);
-  pinMode(8, OUTPUT);
-  pinMode(11, OUTPUT);
-  pinMode(13, OUTPUT);
+  digitalWrite(PIN_APU_A7, HIGH);
+  pinMode(PIN_LCD_CS, OUTPUT);
+  pinMode(PIN_LCD_C_D, OUTPUT);
+  pinMode(PIN_LCD_RST, OUTPUT);
+  pinMode(PIN_LCD_MOSI, OUTPUT);
+  pinMode(PIN_LCD_CLK, OUTPUT);
   SPI.begin();
 }
 

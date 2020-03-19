@@ -41,6 +41,12 @@ public:
       --updateDelay;
       return;
     }
+    
+    pinMode(latchPin, OUTPUT);
+    pinMode(clockPin, OUTPUT);
+    pinMode(dataPin, INPUT_PULLUP);
+    digitalWrite(latchPin, 0);
+    digitalWrite(clockPin, 0);
 
     // Latch the data
     digitalWrite(latchPin, 1);
@@ -48,7 +54,7 @@ public:
     
     // Read the data
     controllerStatus = 0;
-    for (int i = 0; i < 16; i++) {
+    for (int i = 0; i < 16; ++i) {
       // Grab a button
       controllerStatus <<= 1;
       controllerStatus += digitalRead(dataPin);
@@ -77,7 +83,9 @@ public:
     return (controllerStatus & button) != 0 && (lastControllerStatus & button) == 0;
   }
   
-  word getStatus() { return controllerStatus; }
+  word getStatus() {
+    return controllerStatus;
+  }
 
 private:
   byte latchPin;

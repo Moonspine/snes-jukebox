@@ -50,8 +50,9 @@ void drawByte(Adafruit_ST7735 &lcd, byte data, int x, int y) {
 }
 
 char getHex(byte value) {
-  if (value < 10)
+  if (value < 10) {
     return '0' + value;
+  }
   return 'A' + (value - 10);
 }
 
@@ -74,7 +75,7 @@ void drawWord(Adafruit_ST7735 &lcd, word data, int x, int y) {
   while (data > 0) {
     text[nextChar] = (data % 10) + '0';
     data /= 10;
-    nextChar--;
+    --nextChar;
   }
   
   if (nextChar == 4) {
@@ -105,8 +106,8 @@ void drawIcon(Adafruit_ST7735 &lcd, prog_uint16_t *data, int xOffset, int yOffse
   word width = pgm_read_word(currentData++);
   word height = pgm_read_word(currentData++);
   
-  for (word y = 0; y < height; y++) {
-    for (word x = 0; x < width; x++) {
+  for (word y = 0; y < height; ++y) {
+    for (word x = 0; x < width; ++x) {
       word color = pgm_read_word(currentData++);
       lcd.drawPixel(x + xOffset, y + yOffset, color);
     }

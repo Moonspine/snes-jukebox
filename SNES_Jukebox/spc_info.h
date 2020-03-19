@@ -37,25 +37,29 @@ public:
     f.seek(DSP_RAM_START + 0x7D);
     temp = f.read();
     echoSize = (word)(temp & 0x0F) * 2048;
-    if (echoSize == 0) echoSize = 4;
+    if (echoSize == 0) {
+      echoSize = 4;
+    }
     
     // Locate the best spot for the bootloader
     int echoEnd = echoRegion + echoSize;
     bootCount = 0;
     byte lastByte;
     bool first = true;
-    for(bootLocation = 0xFFBF; bootLocation >= 0x100; bootLocation--) {
-      if(!echoEnabled || bootLocation > echoEnd || bootLocation < echoRegion) {
+    for (bootLocation = 0xFFBF; bootLocation >= 0x100; --bootLocation) {
+      if (!echoEnabled || bootLocation > echoEnd || bootLocation < echoRegion) {
         f.seek(RAM_START + bootLocation);
         temp = f.read();
-        if(first || temp == lastByte)
-          bootCount++;
-        else
+        if(first || temp == lastByte) {
+          ++bootCount;
+        } else {
           bootCount = 0;
+        }
         first = false;
         lastByte = temp;
-        if(bootCount == BOOTLOADER_LENGTH)
+        if(bootCount == BOOTLOADER_LENGTH) {
           break;
+        }
       } else {
         bootCount = 0;
       }
@@ -108,8 +112,14 @@ public:
   word getEchoSize() { return echoSize; }
   word getBootLocation() { return bootLocation; }
   byte getBootCount() { return bootCount; }
-  byte getExtraData(byte index) { return extraData[index]; }
-  bool isInPortZero() { return extraData[0] == 0 && extraData[1] == 0 && extraData[2] == 0 && extraData[3] == 0; }
+  
+  byte getExtraData(byte index) {
+    return extraData[index];
+  }
+  
+  bool isInPortZero() {
+    return extraData[0] == 0 && extraData[1] == 0 && extraData[2] == 0 && extraData[3] == 0;
+  }
   
 private:
   byte PC_High;
