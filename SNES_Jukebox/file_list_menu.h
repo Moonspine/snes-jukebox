@@ -24,6 +24,7 @@ public:
     currentFileIndexOffset = 0;
     totalFileCount = 0xFFFF;
     lastReadFile = 0;
+    pageStartOffset = root.position();
   }
   
   void update(Adafruit_ST7735 &lcd, SNESController &controller) {
@@ -118,16 +119,7 @@ public:
   }
   
   void resetPage() {
-    if (lastReadFile == currentFileIndexOffset) {
-      return;
-    }
-    
-    lastReadFile = 0;
-    root.rewindDirectory();
-    for (uint32_t i = 0; i < currentFileIndexOffset; ++i) {
-      File f = root.openNextFile();
-      f.close();
-    }
+    root.seek(pageStartOffset);
     lastReadFile = currentFileIndexOffset;
   }
 
@@ -137,7 +129,15 @@ public:
     }
     
     currentFileIndexOffset -= filesPerPage;
-    resetPage();
+    
+    lastReadFile = 0;
+    root.rewindDirectory();
+    for (uint32_t i = 0; i < currentFileIndexOffset; ++i) {
+      File f = root.openNextFile();
+      f.close();
+    }
+    lastReadFile = currentFileIndexOffset;
+    pageStartOffset = root.position();
 
     return true;
   }
@@ -153,6 +153,21 @@ public:
       // Call readNextFile() until at end of page
     }
     
+    // Attempt to read the next tile
+    uint32_t pos = root.position();
+    bool atEnd = !readNextFile(temp, temp2);
+    
+    // Reset file
+    root.seek(pos);
+    --lastReadFile;
+    
+    // If we couldn't read the next file, we failed
+    if (atEnd) {
+      return false;
+    }
+   
+    // Otherwise, we succeeded at switching pages
+    pageStartOffset = root.position();
     currentFileIndexOffset += filesPerPage;
     return true;
   }
@@ -188,16 +203,6 @@ public:
       endSdRead();
 
       if (!readNext) {
-        if (i == 0) {
-          beginSdRead();
-          previousPage();
-          endSdRead();
-          
-          drawMenu(lcd);
-          drawFileSelection(lcd);
-          return;
-        }
-        
         break;
       }
       
@@ -228,6 +233,7 @@ private:
   word currentFileIndexOffset;
   word totalFileCount;
   word lastReadFile;
+  uint32_t pageStartOffset;
   
   bool justWroteSpc;
   byte lastWrittenPorts[4];
