@@ -2,6 +2,7 @@
 #define NES_CONTROLLER_H
 
 #include <arduino.h>
+#include "utils.h"
 
 struct SNESController {
 public:
@@ -33,12 +34,19 @@ public:
     pinMode(dataPin, INPUT_PULLUP);
     digitalWrite(latchPin, 0);
     digitalWrite(clockPin, 0);
+    
+    lastUpdateTimestamp = millis() & 0xFFFF;
   }
   
   void update(byte debounceDelay) {
     lastControllerStatus = controllerStatus;
     if (updateDelay > 0 && debounceDelay > 0) {
-      --updateDelay;
+      word elapsedTime = computeElapsedTime(lastUpdateTimestamp);
+      if (updateDelay < elapsedTime) {
+        updateDelay = 0;
+      } else {
+        updateDelay -= elapsedTime;
+      }
       return;
     }
     
@@ -91,7 +99,8 @@ private:
   byte latchPin;
   byte clockPin;
   byte dataPin;
-  byte updateDelay;
+  word updateDelay;
+  word lastUpdateTimestamp;
 
   word controllerStatus;
   word lastControllerStatus;
