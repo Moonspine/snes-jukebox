@@ -35,7 +35,7 @@ public:
     digitalWrite(latchPin, 0);
     digitalWrite(clockPin, 0);
     
-    lastUpdateTimestamp = millis() & 0xFFFF;
+    lastUpdateTimestamp = (word)(millis() & 0xFFFF);
   }
   
   void update(byte debounceDelay) {
@@ -107,4 +107,3 @@ private:
 };
 
 #endif
-

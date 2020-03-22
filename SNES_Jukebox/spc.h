@@ -3,7 +3,7 @@
 
 unsigned char port0state;
 
-void startapuwrite(uint16_t address, prog_uchar *data, int len) {
+void startapuwrite(uint16_t address, const uint8_t *data, int len) {
   resetApu();
 
   writedata(3, address >> 8);
@@ -146,4 +146,3 @@ void writeBytes(byte *data, word count) {
 }
 
 #endif
-

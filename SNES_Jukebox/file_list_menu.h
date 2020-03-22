@@ -244,7 +244,7 @@ private:
   }
   
   void drawMenuItem(Adafruit_ST7735 &lcd, int i, const char *filename, bool isDirectory) {
-    prog_uint16_t *icon = NULL;
+    const uint16_t *icon = NULL;
     if (isDirectory) {
       icon = folderIcon;
     } else if (isSpcFile(filename)) {
@@ -367,7 +367,7 @@ private:
     // Write SPC RAM data
     beginBlockWrite(0x100);
     writeBytes(&buffer[384], SPC_UPLOAD_BUFFER_SIZE - 384);
-    for (uint32_t i = 0x180; i < 0x10000; i += SPC_UPLOAD_BUFFER_SIZE) {
+    for (uint32_t i = 0x100 + (SPC_UPLOAD_BUFFER_SIZE - 384); i < 0x10000; i += SPC_UPLOAD_BUFFER_SIZE) {
       // Read more data from the card
       beginSdRead();
       readSpcRamData(file, info, (word)i, buffer, min(SPC_UPLOAD_BUFFER_SIZE, (word)(0x10000 - i)));
@@ -442,4 +442,3 @@ private:
 };
 
 #endif
-

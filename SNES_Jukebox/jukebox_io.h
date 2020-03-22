@@ -41,7 +41,7 @@ void beginSdRead() {
   SD.begin(PIN_SD_CS);
 }
 
-File beginSdRead(char *filename) {
+File beginSdRead(const char *filename) {
   beginSdRead();
   return SD.open(filename, FILE_READ);
 }
@@ -73,4 +73,3 @@ void endLcdWrite() {
 }
 
 #endif
-

@@ -11,13 +11,18 @@ Note: Since this does make use of libraries for the LCD screen, you'll need to g
 https://github.com/adafruit/Adafruit-ST7735-Library
 https://github.com/adafruit/Adafruit-GFX-Library
 
-Additionally, I do not have it working with the latest Arduino IDE as of yet. I may fix this in the future, but to run this program correctly, you'll need to download a 1.0.x version of the IDE (I tested this on 1.0.5-r2).
-Note that the Adafruit libraries have undergone a lot of development since I initially used them in this project. They are no longer compatible with Arduino 1.0.5-r2. You will need to use very specific old versions of these libraries in order to compile:
+You can also download them in your Arduino IDE via "Sketch -> Include Library -> Manage Libraries..."
+
+The latest tested and fully functional versions of each software component are as follows:
+- Arduino IDE 1.8.12
+- Adafruit GFX library 1.7.5
+- Adafruit ST7735 library 1.5.15
+
+If you want to use an earlier version of the IDE, I originally developed this project using the following versions:
+- Arduino IDE 1.0.5-r2
 - Adafruit GFX library 1.0.2 (commit hash 4edc8942c46e7aeff; See https://github.com/adafruit/Adafruit-GFX-Library/commit/4edc8942c46e7aeff383d00576d71d6b9068e4a8 )
 - Adafruit ST7735 library 1.0.4 (Commit hash 74238f6ea8db16f2b; See https://github.com/adafruit/Adafruit-ST7735-Library/commit/74238f6ea8db16f2bfe76e7aee852d536e158e50 )
-
-I have attempted to upgrade to the Arduino 1.8.12 IDE using the latest versions of the Adafruit libraries (ST7735 version 1.5.15 and GFX version 1.7.6 at the time of this writing), but I ran into some pretty severe (what I suspect are memory) issues, likely due to bloat in various third party libraries. If you want to take a crack at it, check out the new_arduino branch. You may be able to avoid these memory issues if you use a Mega (or another Arduino with more RAM) instead of the Uno I built my project out of.
-Note that this is not necessary if you use the old library and IDE versions I mentioned above.
+(You can safely compile the code with either version, and I have tested that it works just fine.)
 
 This program has the following interesting characteristics:
 
@@ -36,8 +41,3 @@ Converting music for streaming on the SPC-700:
  - Run TPS/snesbrr.exe like this:
    snesbrr -e YourSong.wav YourSong.brr
  - This .brr file is the file you'll need to drop on the SD card to play on the jukebox.
-
-
-The future:
-
-- I'd like to convert this to the latest Arduino release, if possible.

@@ -31,7 +31,7 @@ public:
 
   void initialize(Adafruit_ST7735 &lcd) {
     drawMenu(lcd);
-    lastUpdateTimestamp = millis() & 0xFFFF;
+    lastUpdateTimestamp = (word)(millis() & 0xFFFF);
     frameDelay = 0;
   }
   
@@ -51,6 +51,8 @@ public:
     drawOriginalPorts(lcd, 80);
     drawLastWritten(lcd, 90);
     drawWritingPorts(lcd, WRITES_Y);
+
+    drawSelectionReticule(lcd, WRITES_Y);
     
     // - Port write menu -
     //
@@ -89,10 +91,11 @@ public:
         debounceDelay -= elapsedTime;
       }
     }
-    
+
     const byte increment = controller.isPressed(SNESController::X) ? 16 : 1;
     if (debounceDelay == 0) {
       // Update selection stuff
+      byte lastSelection = currentSelection;
       if (controller.justPressed(SNESController::UP)) {
         currentlyWritingPorts[currentSelection] += increment;
         drawWritingPorts(lcd, WRITES_Y);
@@ -113,8 +116,10 @@ public:
         currentSelection = (currentSelection + 1) % 4;
         debounceDelay = CONTROLLER_DEBOUNCE_DELAY;
       }
-      
-      drawSelectionReticule(lcd, WRITES_Y);
+
+      if (lastSelection != currentSelection) {
+        drawSelectionReticule(lcd, WRITES_Y);
+      }
       
       if (controller.justPressed(SNESController::A)) {
         writedata(currentSelection, currentlyWritingPorts[currentSelection]);
@@ -221,12 +226,14 @@ private:
   void drawSelectionReticule(Adafruit_ST7735 &lcd, byte y) {
     beginLcdWrite();
     for (byte i = 0; i < 4; ++i) {
-      word color = (i == currentSelection) ? ST7735_BLUE : ST7735_BLACK;
-      lcd.drawRect(40 + i * 18 - 2, y - 2, 16, 14, color);
+      word color = (i == currentSelection) ? ST7735_RED : ST7735_BLACK;
+      const byte x0 = 40 + i * 18 - 2;
+      const byte y0 = y - 2;
+      //lcd.drawLine(x0, y0, x0 + 16, y0, color);
+      lcd.drawLine(x0, y0 + 14, x0 + 16, y0 + 14, color);
     }
     endLcdWrite();
   }
 };
 
 #endif
-
