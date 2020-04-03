@@ -71,17 +71,14 @@ void uploadBrrBlock(byte *buffer, int count) {
   // Wait for ready signal
   while(readdata(1) != 0xEF) {};
 
+  // The last block needs to be marked as an end block
+  buffer[(count - 1) * 9] |= 0x01;
+
   // Write out the BRR data
   for (uint32_t j = 0; j < count; ++j) {
-    bool blockEnd = j == count - 1;
-    
     byte *brrData = &buffer[j * 9];
     
     brrData[0] |= 0x02; // < Enforce looping
-    if (blockEnd) {
-      // The last block needs to be marked as an end block
-      brrData[0] |= 0x01;
-    }
 
     // Upload the block
     sendThreeBytes(0x01, brrData[0], brrData[1], brrData[2]);
@@ -117,7 +114,7 @@ void streamBrrFile(File &file, Adafruit_ST7735 &lcd) {
     endSdRead();
 
     uploadBrrBlock(buffer, nextBlockTransferCount);
-    brrBlockCount += nextBlockTransferCount;
+    nextBrrBlock += nextBlockTransferCount;
   }
   
   // Upload the terminator
