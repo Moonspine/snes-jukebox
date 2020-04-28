@@ -11,7 +11,7 @@ unsigned char readdata(unsigned char address) {
   PORT_DIR_APU_D2_7 &= ~0xFC;
 
   // Set bits 0, 1 to address
-  // Ser /RD low (active)
+  // Set /RD low (active)
   PORT_OUT_APU_D0_1_CTRL = ((PORT_OUT_APU_D0_1_CTRL & ~0x03) | (address & 0x03)) & ~0x04;
 
   // Read delay
