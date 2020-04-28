@@ -35,7 +35,7 @@ start:
 	mov $f3, #$00
 
 	mov $f2, #$03      // Load voice[0].pitch[H] (1/2 of standard pitch for data compression)
-	mov $f3, #$08
+	mov $f3, #$10
 
 	mov $f2, #$05      // Load voice[0].adsr[1] (enable gain)
 	mov $f3, #$00
@@ -45,6 +45,20 @@ start:
 
 	mov $f2, #$04      // Load voice[0].src
 	mov $f3, #$00
+	
+	
+	// Set up the source directory (samples at $1000 and $2000)
+	mov x, #$00
+	mov $500, x
+	mov $502, x
+	mov $504, x
+	mov $506, x
+	mov x, #$10
+	mov $501, x
+	mov $503, x
+	mov x, #$20
+	mov $505, x
+	mov $507, x
 	
 	
 	// Set up the initial dummy sample (Looping silence)
@@ -232,13 +246,3 @@ finishPlay:
 	mov $00, a
 
 	jmp waitForData
-	
-	
-	
-	
-	org $0300 // $500 in RAM (base is at $200)
-srcdir:
-	dw $1000  // First sample is at $1000 (up to 4KB, but likely only 630 bytes)
-	dw $1000
-	dw $2000  // Second sample is at $2000 (up to 4KB, but likely only 630 bytes)
-	dw $2000

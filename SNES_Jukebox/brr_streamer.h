@@ -92,13 +92,13 @@ void uploadBrrBlock(byte *buffer, int count) {
 
 void streamBrrFile(File &file, Adafruit_ST7735 &lcd) {
   byte buffer[BRR_TRANSFER_BLOCK_SIZE];
-  
+
   beginLcdWrite();
   clearLcd(lcd);
   drawPgmText(lcd, TEXT_STREAMING, 0, 0);
   drawText(lcd, file.name(), 0, 10);
   endLcdWrite();
-  
+
   beginSdRead();
   uint32_t brrBlockCount = file.size() / 9;
   endSdRead();
@@ -107,7 +107,7 @@ void streamBrrFile(File &file, Adafruit_ST7735 &lcd) {
   uint32_t nextBrrBlock = 0;
   for (uint32_t i = 0; i < brrBatchCount; ++i) {
     word nextBlockTransferCount = min(BRR_TRANSFER_BLOCK_COUNT, (word)min(brrBlockCount - nextBrrBlock, 65535));
-    
+
     // Fetch the next BRR blocks
     beginSdRead();
     file.read(buffer, nextBlockTransferCount * 9);

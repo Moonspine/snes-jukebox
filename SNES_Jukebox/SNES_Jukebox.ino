@@ -27,17 +27,31 @@ void setup() {
   setupAPUPins();
   pinMode(PIN_SD_CS, OUTPUT);
   digitalWrite(PIN_SD_CS, HIGH);
-  
+
+  /*
+   * You may need to change this line depending on the specific LCD you're using (See the Adafruit documentation for more information).
+   * Valid values are:
+   *  INITR_BLACKTAB
+   *  INITR_GREENTAB
+   */
   lcd.initR(INITR_BLACKTAB);
   
   beginLcdWrite();
   clearLcd(lcd);
   endLcdWrite();
+
+  // TODO: Remove this test code
+  /*File file = beginSdRead("/brr/again32.brr");
+  endSdRead();
+  uploadBrrSongLoader(lcd);
+  streamBrrFile(file, lcd);*/
 }
 
 void loop() {
   // Read controller
+#if defined(ARDUINO_AVR_UNO)
   SPI.end();
+#endif
   digitalWrite(PIN_APU_A7, HIGH);
   controller.update(currentMenu == 0 ? CONTROLLER_DEBOUNCE_DELAY : 0);
   setupAPUPins();
@@ -80,4 +94,3 @@ void loop() {
     }
   }
 }
-
