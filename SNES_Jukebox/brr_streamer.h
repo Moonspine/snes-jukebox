@@ -35,7 +35,7 @@ void endApuBlockWrite(word executionAddress) {
   }
   writedata(1, 0);
   writedata(0, p0);
-  while(readdata(1) != 0xEF) {}
+  while(readdata(1) != 0xEE) {}
 }
 
 
@@ -67,12 +67,15 @@ void sendThreeBytes(byte groupNumber, byte data0, byte data1, byte data2) {
   while (readdata(1) != groupNumber) {}
 }
 
-void uploadBrrBlock(byte *buffer, int count) {
+void uploadBrrBlock(byte *buffer, int count, bool stereo) {
   // Wait for ready signal
   while(readdata(1) != 0xEF) {};
 
   // The last block needs to be marked as an end block
   buffer[(count - 1) * 9] |= 0x01;
+  if (stereo && count >= 2) {
+    buffer[(count - 2) * 9] |= 0x01;
+  }
 
   // Write out the BRR data
   for (uint32_t j = 0; j < count; ++j) {
@@ -90,17 +93,74 @@ void uploadBrrBlock(byte *buffer, int count) {
   writedata(1, 0x00);
 }
 
-void streamBrrFile(File &file, Adafruit_ST7735 &lcd) {
+/**
+ * Sets the pitch and stereo mode up (call after uploadBrrSongLoader() but before streaming any BRR data)
+ * 
+ * @param sampleRate The BRR file's sample rate
+ * @param stereo If true, the BRR file contains stereo data
+ */
+void setupLoaderParameters(word sampleRate, bool stereo) {
+  word pitch = (word)(((uint32_t)sampleRate * (uint32_t)0x1000) / 32000);
+  
+  while(readdata(1) != 0xEE) {};
+  writedata(0, stereo ? 0x02 : 0x01);
+  writedata(2, (pitch & 0xFF00) >> 8);
+  writedata(3, pitch & 0xFF);
+  writedata(1, 0xEE);
+}
+
+#if defined(ARDUINO_AVR_UNO)
+  void writeStreamInfo(Adafruit_ST7735 &lcd, const char *filename, word sampleRate, bool stereo) {
+    beginLcdWrite();
+    clearLcd(lcd);
+    drawPgmText(lcd, TEXT_STREAMING, 0, 0);
+    drawText(lcd, filename, 0, 10);
+    drawPgmText(lcd, TEXT_PRESS_B_TO_STOP, 0, 30);
+    endLcdWrite();
+  }
+#elif defined(ARDUINO_AVR_MEGA2560)
+  void writeStreamInfo(Adafruit_ST7735 &lcd, const char *filename, word sampleRate, bool stereo) {
+    char buffer[11] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+  
+    word temp = sampleRate;
+    word multiplier = 10000;
+    byte offset = 0;
+    while (multiplier > 0 && sampleRate > 0) {
+      if (multiplier == 100) {
+        buffer[offset++] = '.';
+      }
+      if (sampleRate >= multiplier) {
+        byte digit = temp / multiplier;
+        temp -= digit * multiplier;
+        buffer[offset++] = '0' + digit;
+      } else {
+        buffer[offset++] = '0';
+      }
+      multiplier /= 10;
+    }
+    buffer[offset++] = ' ';
+    if (sampleRate >= 1000) {
+      buffer[offset++] = 'K';
+    }
+    buffer[offset++] = 'H';
+    buffer[offset++] = 'z';
+    
+    beginLcdWrite();
+    clearLcd(lcd);
+    drawPgmText(lcd, TEXT_STREAMING, 0, 0);
+    drawText(lcd, filename, 0, 10);
+    drawText(lcd, buffer, 0, 30);
+    drawPgmText(lcd, stereo ? TEXT_STEREO : TEXT_MONO, 0, 40);
+    drawPgmText(lcd, TEXT_PRESS_B_TO_STOP, 0, 60);
+    endLcdWrite();
+  }
+#endif
+
+void streamBrrFileData(File &file, bool stereo) {
   byte buffer[BRR_TRANSFER_BLOCK_SIZE];
 
-  beginLcdWrite();
-  clearLcd(lcd);
-  drawPgmText(lcd, TEXT_STREAMING, 0, 0);
-  drawText(lcd, file.name(), 0, 10);
-  endLcdWrite();
-
   beginSdRead();
-  uint32_t brrBlockCount = file.size() / 9;
+  uint32_t brrBlockCount = (file.size() - file.position()) / 9;
   endSdRead();
   uint32_t brrBatchCount = brrBlockCount / BRR_TRANSFER_BLOCK_COUNT;
 
@@ -113,16 +173,61 @@ void streamBrrFile(File &file, Adafruit_ST7735 &lcd) {
     file.read(buffer, nextBlockTransferCount * 9);
     endSdRead();
 
-    uploadBrrBlock(buffer, nextBlockTransferCount);
+    uploadBrrBlock(buffer, nextBlockTransferCount, stereo);
     nextBrrBlock += nextBlockTransferCount;
+
+    // Cancel playback (the Uno requires a little more I/O here due to limited pin assignments)
+#if defined(ARDUINO_AVR_UNO)
+    digitalWrite(PIN_APU_A7, HIGH);
+    digitalWrite(PIN_CONTROLLER_LATCH, 0);
+#endif
+    digitalWrite(PIN_CONTROLLER_LATCH, 1);
+    digitalWrite(PIN_CONTROLLER_LATCH, 0);
+    byte bState = digitalRead(PIN_CONTROLLER_DATA);
+#if defined(ARDUINO_AVR_UNO)
+    digitalWrite(PIN_APU_A7, LOW);
+#endif
+    if (bState == 0) {
+      break;
+    }
   }
   
   // Upload the terminator
   buffer[0] = 0x03;
-  for (int i = 1; i <= 8; ++i) {
-    buffer[i] = 0x02;
+  for (int i = 1; i < 18; ++i) {
+    buffer[i] = 0x00;
   }
-  uploadBrrBlock(buffer, 1);
+  buffer[9] = 0x03;
+  uploadBrrBlock(buffer, stereo ? 2 : 1, stereo);
+}
+
+void streamBrrFile(File &file, Adafruit_ST7735 &lcd) {
+  // Initialize brr streaming sample rate
+  setupLoaderParameters(BRR_FILE_SAMPLE_RATE, false);
+
+  writeStreamInfo(lcd, file.name(), BRR_FILE_SAMPLE_RATE, false);
+  streamBrrFileData(file, false);
+}
+
+void streamBr2File(File &file, Adafruit_ST7735 &lcd) {
+  byte header[4];
+  
+  beginSdRead();
+  file.read(header, 4);
+  endSdRead();
+
+  if (header[0] != 1) {
+    // Version mismatch
+    endSdRead();
+    // TODO: Error message?
+    return;
+  }
+
+  word sampleRate = ((word)header[1] << 8) + header[2];
+  setupLoaderParameters(sampleRate, header[3] == 0x02);
+
+  writeStreamInfo(lcd, file.name(), sampleRate, header[3] == 0x02);
+  streamBrrFileData(file, header[3] == 0x02);
 }
 
 #endif

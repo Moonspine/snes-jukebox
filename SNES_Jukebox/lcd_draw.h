@@ -4,6 +4,7 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_ST7735.h>
 
+#include "icons.h"
 
 void clearLcd(Adafruit_ST7735 &lcd) {
   lcd.fillScreen(ST7735_BLACK);
@@ -101,14 +102,21 @@ void drawBinaryByte(Adafruit_ST7735 &lcd, byte data, int x, int y) {
   drawText(lcd, text, x, y);
 }
 
-void drawIcon(Adafruit_ST7735 &lcd, const uint16_t *data, int xOffset, int yOffset) {
-  const uint16_t *currentData = data;
-  word width = pgm_read_word(currentData++);
-  word height = pgm_read_word(currentData++);
-  
+void drawIcon(Adafruit_ST7735 &lcd, const uint8_t *data, int xOffset, int yOffset) {
+  const uint8_t *currentData = data;
+  byte width = pgm_read_byte(currentData++);
+  byte height = pgm_read_byte(currentData++);
+
+  const uint8_t *palette = currentData + ((width + (width % 2)) * height / 2);
+
+  byte indexData = 0;
   for (word y = 0; y < height; ++y) {
     for (word x = 0; x < width; ++x) {
-      word color = pgm_read_word(currentData++);
+      if (x % 2 == 0) {
+        indexData = pgm_read_byte(currentData++);
+      }
+      byte paletteOffset = ((x % 2 == 0) ? (indexData >> 4) : (indexData & 0x0F)) * 2;
+      word color = COLOR((pgm_read_byte(palette + paletteOffset) << 8) + pgm_read_byte(palette + paletteOffset + 1));
       lcd.drawPixel(x + xOffset, y + yOffset, color);
     }
   }

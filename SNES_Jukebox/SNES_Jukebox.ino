@@ -3,6 +3,7 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_ST7735.h>
 
+#include "configuration.h"
 #include "pin_defs.h"
 #include "defines.h"
 #include "snes_apu.h"
@@ -24,27 +25,16 @@ Adafruit_ST7735 lcd = Adafruit_ST7735(PIN_LCD_CS, PIN_LCD_C_D, PIN_LCD_RST);
 SNESController controller(PIN_CONTROLLER_LATCH, PIN_CONTROLLER_CLK, PIN_CONTROLLER_DATA);
 
 void setup() {
+  initialSetup();
   setupAPUPins();
   pinMode(PIN_SD_CS, OUTPUT);
   digitalWrite(PIN_SD_CS, HIGH);
 
-  /*
-   * You may need to change this line depending on the specific LCD you're using (See the Adafruit documentation for more information).
-   * Valid values are:
-   *  INITR_BLACKTAB
-   *  INITR_GREENTAB
-   */
-  lcd.initR(INITR_BLACKTAB);
+  lcd.initR(LCD_TYPE);
   
   beginLcdWrite();
   clearLcd(lcd);
   endLcdWrite();
-
-  // TODO: Remove this test code
-  /*File file = beginSdRead("/brr/again32.brr");
-  endSdRead();
-  uploadBrrSongLoader(lcd);
-  streamBrrFile(file, lcd);*/
 }
 
 void loop() {

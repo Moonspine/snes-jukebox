@@ -6,6 +6,10 @@
 #if defined(ARDUINO_AVR_UNO)
   bool isSdStarted = false;
 
+  void initialSetup() {
+    // Nothing to do
+  }
+
   void setupAPUPins() {
     // Prepare I/O pins
     pinMode(PIN_LCD_CLK, INPUT_PULLUP);
@@ -82,29 +86,35 @@
     setupAPUPins();
   }
 #elif defined(ARDUINO_AVR_MEGA2560)
-  bool isSdStarted = false;
-  
-  void setupAPUPins() {
+  void initialSetup() {
     // Prepare I/O pins
     PORT_DIR_APU_CTRL = 0x0F;
     PORT_OUT_APU_CTRL = 0x0F;
     pinMode(PIN_APU_RST, OUTPUT);
     digitalWrite(PIN_APU_RST, HIGH);
-    
-    // Select APU
     pinMode(PIN_APU_A7, OUTPUT);
+
+    // Prepare LCD pins
+    pinMode(PIN_LCD_CS, OUTPUT);
+    pinMode(PIN_LCD_C_D, OUTPUT);
+    pinMode(PIN_LCD_RST, OUTPUT);
+    pinMode(PIN_LCD_MOSI, OUTPUT);
+    pinMode(PIN_LCD_CLK, OUTPUT);
+
+    // Prepare SD
+    SD.begin(PIN_SD_CS);
+  }
+  
+  void setupAPUPins() {
+    // Select APU
     digitalWrite(PIN_APU_A7, LOW);
   }
   
   void beginSdRead() {
-    if (!isSdStarted) {
-      SD.begin(PIN_SD_CS);
-      isSdStarted = true;
-    }
+    // Nothing to do
   }
   
   File beginSdRead(const char *filename) {
-    beginSdRead();
     return SD.open(filename, FILE_READ);
   }
   
@@ -120,11 +130,6 @@
   
   void beginLcdWrite() {
     digitalWrite(PIN_APU_A7, HIGH);
-    pinMode(PIN_LCD_CS, OUTPUT);
-    pinMode(PIN_LCD_C_D, OUTPUT);
-    pinMode(PIN_LCD_RST, OUTPUT);
-    pinMode(PIN_LCD_MOSI, OUTPUT);
-    pinMode(PIN_LCD_CLK, OUTPUT);
   }
   
   void endLcdWrite() {

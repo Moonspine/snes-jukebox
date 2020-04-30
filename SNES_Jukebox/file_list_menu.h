@@ -85,6 +85,11 @@ public:
             uploadBrrSongLoader(lcd);
             streamBrrFile(f, lcd);
             f.close();
+          } else if (isBr2File(f)) {
+            endSdRead();
+            uploadBrrSongLoader(lcd);
+            streamBr2File(f, lcd);
+            f.close();
           }
           drawMenu(lcd);
         }
@@ -244,13 +249,15 @@ private:
   }
   
   void drawMenuItem(Adafruit_ST7735 &lcd, int i, const char *filename, bool isDirectory) {
-    const uint16_t *icon = NULL;
+    const uint8_t *icon = NULL;
     if (isDirectory) {
       icon = folderIcon;
     } else if (isSpcFile(filename)) {
       icon = spcFileIcon;
     } else if (isBrrFile(filename)) {
       icon = brrFileIcon;
+    } else if (isBr2File(filename)) {
+      icon = br2FileIcon;
     } else {
       icon = fileIcon;
     }
@@ -329,6 +336,36 @@ private:
   bool isBrrFile(File &f) {
     const char *filename = f.name();
     return isBrrFile(filename);
+  }
+
+  bool isBr2File(const char *filename) {
+    // Locate dot index
+    int dotIndex = -1;
+    for (int i = 0; i <= 8 && dotIndex < 0; ++i) {
+      if (filename[i] == '.') {
+        dotIndex = i;
+      }
+    }
+    if (dotIndex < 0) return false;
+    
+    // Test file extension
+    if (filename[dotIndex + 1] != 'b' && filename[dotIndex + 1] != 'B') {
+      return false;
+    }
+    if (filename[dotIndex + 2] != 'r' && filename[dotIndex + 2] != 'R') {
+      return false;
+    }
+    if (filename[dotIndex + 3] != '2' && filename[dotIndex + 3] != 'R') {
+      return false;
+    }
+    
+    // SPC file!
+    return true;
+  }
+  
+  bool isBr2File(File &f) {
+    const char *filename = f.name();
+    return isBr2File(filename);
   }
   
   void uploadSpc(Adafruit_ST7735 &lcd, File &file) {

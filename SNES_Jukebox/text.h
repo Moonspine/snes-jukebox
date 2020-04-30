@@ -7,6 +7,9 @@
 static PROGMEM const char TEXT_UPLOADING_LOADER[] = "Upoading loader...";
 static PROGMEM const char TEXT_LOADER_UPLOADED[] = "Loader uploaded!";
 static PROGMEM const char TEXT_STREAMING[] = "Streaming:";
+static PROGMEM const char TEXT_PRESS_B_TO_STOP[] = "Press 'B' to stop";
+static PROGMEM const char TEXT_MONO[] = "Monaural";
+static PROGMEM const char TEXT_STEREO[] = "Stereo";
 
 // SPC loading
 static PROGMEM const char TEXT_SELECT_FILE[] = "-- Select SPC, BRR --";
@@ -32,4 +35,3 @@ void copyPgmString(const char *source, byte *dest, word charLimit) {
 }
 
 #endif
-
