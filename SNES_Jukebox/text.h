@@ -8,6 +8,9 @@ static PROGMEM const char TEXT_UPLOADING_LOADER[] = "Upoading loader...";
 static PROGMEM const char TEXT_LOADER_UPLOADED[] = "Loader uploaded!";
 static PROGMEM const char TEXT_STREAMING[] = "Streaming:";
 static PROGMEM const char TEXT_PRESS_B_TO_STOP[] = "Press 'B' to stop";
+static PROGMEM const char TEXT_PRESS_A_TO_PAUSE[] = "Press 'A' to pause";
+static PROGMEM const char TEXT_PRESS_A_TO_UNPAUSE[] = "Press 'A' to unpause";
+static PROGMEM const char TEXT_PRESS_LEFT_RIGHT_TO_SEEK[] = "Press < or > to seek";
 static PROGMEM const char TEXT_MONO[] = "Monaural";
 static PROGMEM const char TEXT_STEREO[] = "Stereo";
 

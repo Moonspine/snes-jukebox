@@ -35,6 +35,21 @@ public:
     lastProgress = currentProgress;
   }
 
+  void setProgress(uint32_t newProgress) {
+    currentProgress = min(newProgress, maxProgress);
+    
+    int lastProgressWidth = (int)floor(((float)lastProgress / maxProgress) * (width - 2));
+    int currentProgressWidth = (int)floor(((float)currentProgress / maxProgress) * (width - 2));
+    if (currentProgressWidth != lastProgressWidth) {
+      beginLcdWrite();
+      lcd.fillRect(x + 1, y + 1, width - 2, PROGRESS_BAR_HEIGHT - 2, ST7735_BLACK);
+      lcd.fillRect(x + 1, y + 1, currentProgressWidth, PROGRESS_BAR_HEIGHT - 2, ST7735_GREEN);
+      endLcdWrite();
+    }
+    
+    lastProgress = currentProgress;
+  }
+
 private:
   Adafruit_ST7735 &lcd;
   byte x;

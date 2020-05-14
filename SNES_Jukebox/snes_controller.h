@@ -90,6 +90,10 @@ public:
   bool justReleased(BUTTON button) {
     return (controllerStatus & button) != 0 && (lastControllerStatus & button) == 0;
   }
+
+  void clearJustPressed() {
+    lastControllerStatus = controllerStatus;
+  }
   
   word getStatus() {
     return controllerStatus;

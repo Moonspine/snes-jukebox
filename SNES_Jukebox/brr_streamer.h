@@ -4,9 +4,12 @@
 #include <SD.h>
 #include "text.h"
 #include "lcd_draw.h"
+#include "progress_bar.h"
 #include "snes_apu.h"
 #include "jukebox_io.h"
 
+
+#define PAUSE_TEXT_Y 100
 
 byte port0statebrr = 0;
 
@@ -110,16 +113,16 @@ void setupLoaderParameters(word sampleRate, bool stereo) {
 }
 
 #if defined(ARDUINO_AVR_UNO)
-  void writeStreamInfo(Adafruit_ST7735 &lcd, const char *filename, word sampleRate, bool stereo) {
+  void writeStreamInfo(Adafruit_ST7735 &lcd, File &file, word sampleRate, bool stereo) {
     beginLcdWrite();
     clearLcd(lcd);
     drawPgmText(lcd, TEXT_STREAMING, 0, 0);
-    drawText(lcd, filename, 0, 10);
+    drawText(lcd, file.name(), 0, 10);
     drawPgmText(lcd, TEXT_PRESS_B_TO_STOP, 0, 30);
     endLcdWrite();
   }
 #elif defined(ARDUINO_AVR_MEGA2560)
-  void writeStreamInfo(Adafruit_ST7735 &lcd, const char *filename, word sampleRate, bool stereo) {
+  void drawSampleRate(Adafruit_ST7735 &lcd, uint8_t x, uint8_t y, word sampleRate) {
     char buffer[11] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
   
     word temp = sampleRate;
@@ -144,25 +147,86 @@ void setupLoaderParameters(word sampleRate, bool stereo) {
     }
     buffer[offset++] = 'H';
     buffer[offset++] = 'z';
+
+    drawText(lcd, buffer, x, y);
+  }
+
+  void drawSongLength(Adafruit_ST7735 &lcd, uint8_t x, uint8_t y, word sampleRate, bool stereo, uint32_t fileSize) {
+    char buffer[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+    uint32_t brrBlocks = fileSize / 9;
+    if (stereo) {
+      brrBlocks /= 2;
+    }
+    uint32_t samples = brrBlocks * 16;
+    uint32_t totalSeconds = samples / sampleRate;
+    uint8_t seconds = totalSeconds % 60;
+    uint8_t minutes = (totalSeconds / 60) % 60;
+    uint8_t hours = min(totalSeconds / 3600, 255);
+
+    uint8_t offset = 0;
+    if (hours > 0) {
+      if (hours >= 100) {
+        buffer[offset++] = '0' + (hours / 100);
+      }
+      if (hours >= 10) {
+        buffer[offset++] = '0' + ((hours / 10) % 10);
+      }
+      if (hours >= 1) {
+        buffer[offset++] = '0' + (hours % 10);
+      }
+      buffer[offset++] = ':';
+    }
+    if (hours > 0 || minutes > 0) {
+      if (hours > 0 || minutes >= 10) {
+        buffer[offset++] = '0' + ((minutes / 10) % 10);
+      }
+      if (hours > 0 || minutes >= 1) {
+        buffer[offset++] = '0' + (minutes % 10);
+      }
+      buffer[offset++] = ':';
+    }
+    if (hours > 0 || minutes > 0 || seconds >= 10) {
+      buffer[offset++] = '0' + ((seconds / 10) % 10);
+    }
+    buffer[offset++] = '0' + (seconds % 10);
+
+    drawText(lcd, buffer, x, y);
+  }
+
+  void writeStreamInfo(Adafruit_ST7735 &lcd, File &file, word sampleRate, bool stereo) {
+    beginSdRead();
+    uint32_t fileSize = file.size();
+    endSdRead();
     
     beginLcdWrite();
     clearLcd(lcd);
     drawPgmText(lcd, TEXT_STREAMING, 0, 0);
-    drawText(lcd, filename, 0, 10);
-    drawText(lcd, buffer, 0, 30);
+    drawText(lcd, file.name(), 0, 10);
+    drawSampleRate(lcd, 0, 30, sampleRate);
     drawPgmText(lcd, stereo ? TEXT_STEREO : TEXT_MONO, 0, 40);
-    drawPgmText(lcd, TEXT_PRESS_B_TO_STOP, 0, 60);
+    drawSongLength(lcd, 0, 50, sampleRate, stereo, fileSize);
+    drawPgmText(lcd, TEXT_PRESS_B_TO_STOP, 0, 90);
+    drawPgmText(lcd, TEXT_PRESS_A_TO_PAUSE, 0, PAUSE_TEXT_Y);
+    drawPgmText(lcd, TEXT_PRESS_LEFT_RIGHT_TO_SEEK, 0, 110);
     endLcdWrite();
   }
 #endif
 
-void streamBrrFileData(File &file, bool stereo) {
+void streamBrrFileData(File &file, bool stereo, Adafruit_ST7735 &lcd, SNESController &controller) {
   byte buffer[BRR_TRANSFER_BLOCK_SIZE];
 
   beginSdRead();
   uint32_t brrBlockCount = (file.size() - file.position()) / 9;
   endSdRead();
   uint32_t brrBatchCount = brrBlockCount / BRR_TRANSFER_BLOCK_COUNT;
+  if (brrBatchCount * BRR_TRANSFER_BLOCK_COUNT < brrBlockCount) {
+    ++brrBatchCount;
+  }
+
+#if defined(ARDUINO_AVR_MEGA2560)
+  ProgressBar progressBar(lcd, 0, 70, 128, brrBatchCount);
+#endif
 
   uint32_t nextBrrBlock = 0;
   for (uint32_t i = 0; i < brrBatchCount; ++i) {
@@ -173,21 +237,73 @@ void streamBrrFileData(File &file, bool stereo) {
     file.read(buffer, nextBlockTransferCount * 9);
     endSdRead();
 
+    // Upload the BRR blocks and advance
     uploadBrrBlock(buffer, nextBlockTransferCount, stereo);
     nextBrrBlock += nextBlockTransferCount;
 
-    // Cancel playback (the Uno requires a little more I/O here due to limited pin assignments)
 #if defined(ARDUINO_AVR_UNO)
+    // Cancel playback (the Uno requires a little more I/O here due to limited pin assignments)
     digitalWrite(PIN_APU_A7, HIGH);
     digitalWrite(PIN_CONTROLLER_LATCH, 0);
-#endif
     digitalWrite(PIN_CONTROLLER_LATCH, 1);
     digitalWrite(PIN_CONTROLLER_LATCH, 0);
-    byte bState = digitalRead(PIN_CONTROLLER_DATA);
-#if defined(ARDUINO_AVR_UNO)
+    bool bState = digitalRead(PIN_CONTROLLER_DATA) == 0;
     digitalWrite(PIN_APU_A7, LOW);
+#elif defined(ARDUINO_AVR_MEGA2560)
+    bool bState = false;
+    controller.update(CONTROLLER_DEBOUNCE_DELAY);
+    if (controller.justPressed(SNESController::B)) {
+      // Stop
+      bState = true;
+    } else if (controller.justPressed(SNESController::A)) {
+      // Pause/unpause
+      controller.clearJustPressed();
+
+      // Upload looping silence
+      buffer[0] = 0x03;
+      for (int i = 1; i < 18; ++i) {
+        buffer[i] = 0x00;
+      }
+      buffer[9] = 0x03;
+      uploadBrrBlock(buffer, stereo ? 2 : 1, stereo);
+
+      lcd.fillRect(0, PAUSE_TEXT_Y, 128, 20, ST7735_BLACK);
+      drawPgmText(lcd, TEXT_PRESS_A_TO_UNPAUSE, 0, PAUSE_TEXT_Y);
+      bool paused = true;
+      while (paused) {
+        controller.update(CONTROLLER_DEBOUNCE_DELAY);
+        if (controller.justPressed(SNESController::A)) {
+          paused = false;
+          lcd.fillRect(0, PAUSE_TEXT_Y, 128, 10, ST7735_BLACK);
+          drawPgmText(lcd, TEXT_PRESS_A_TO_PAUSE, 0, PAUSE_TEXT_Y);
+          drawPgmText(lcd, TEXT_PRESS_LEFT_RIGHT_TO_SEEK, 0, PAUSE_TEXT_Y + 10);
+        } else if (controller.justPressed(SNESController::B)) {
+          controller.clearJustPressed();
+          paused = false;
+          bState = true;
+        }
+      }
+    } else if (controller.justPressed(SNESController::LEFT)) {
+      // Seek backward
+      uint32_t seekAmount = min(i, BRR_SEEK_AMOUNT * (stereo ? 2 : 1));
+      i -= seekAmount;
+      nextBrrBlock -= seekAmount * BRR_TRANSFER_BLOCK_COUNT;
+      file.seek(file.position() - seekAmount * BRR_TRANSFER_BLOCK_COUNT * 9);
+      progressBar.setProgress(i);
+    } else if (controller.justPressed(SNESController::RIGHT)) {
+      // Seek forward
+      uint32_t seekAmount = BRR_SEEK_AMOUNT * (stereo ? 2 : 1);
+      i += seekAmount;
+      nextBrrBlock += seekAmount * BRR_TRANSFER_BLOCK_COUNT;
+      file.seek(file.position() + (uint32_t)seekAmount * BRR_TRANSFER_BLOCK_COUNT * 9);
+      progressBar.setProgress(i);
+    }
+    controller.clearJustPressed();
+
+    progressBar.addProgress(1);
 #endif
-    if (bState == 0) {
+
+    if (bState) {
       break;
     }
   }
@@ -201,15 +317,15 @@ void streamBrrFileData(File &file, bool stereo) {
   uploadBrrBlock(buffer, stereo ? 2 : 1, stereo);
 }
 
-void streamBrrFile(File &file, Adafruit_ST7735 &lcd) {
+void streamBrrFile(File &file, Adafruit_ST7735 &lcd, SNESController &controller) {
   // Initialize brr streaming sample rate
   setupLoaderParameters(BRR_FILE_SAMPLE_RATE, false);
 
-  writeStreamInfo(lcd, file.name(), BRR_FILE_SAMPLE_RATE, false);
-  streamBrrFileData(file, false);
+  writeStreamInfo(lcd, file, BRR_FILE_SAMPLE_RATE, false);
+  streamBrrFileData(file, false, lcd, controller);
 }
 
-void streamBr2File(File &file, Adafruit_ST7735 &lcd) {
+void streamBr2File(File &file, Adafruit_ST7735 &lcd, SNESController &controller) {
   byte header[4];
   
   beginSdRead();
@@ -226,8 +342,8 @@ void streamBr2File(File &file, Adafruit_ST7735 &lcd) {
   word sampleRate = ((word)header[1] << 8) + header[2];
   setupLoaderParameters(sampleRate, header[3] == 0x02);
 
-  writeStreamInfo(lcd, file.name(), sampleRate, header[3] == 0x02);
-  streamBrrFileData(file, header[3] == 0x02);
+  writeStreamInfo(lcd, file, sampleRate, header[3] == 0x02);
+  streamBrrFileData(file, header[3] == 0x02, lcd, controller);
 }
 
 #endif

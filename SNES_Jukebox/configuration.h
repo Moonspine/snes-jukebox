@@ -21,4 +21,10 @@
  */
 #define BRR_FILE_SAMPLE_RATE 16000
 
+/**
+ * The number of BRR buffer lengths to seek when pressing left/right on the D-pad.
+ * To compute the time skipped, multiply this by BRR_TRANSFER_BLOCK_COUNT * 16, then divide the resulting number by the song's sample rate.
+ */
+#define BRR_SEEK_AMOUNT 200
+
 #endif

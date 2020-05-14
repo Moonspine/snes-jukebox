@@ -83,12 +83,12 @@ public:
           } else if (isBrrFile(f)) {
             endSdRead();
             uploadBrrSongLoader(lcd);
-            streamBrrFile(f, lcd);
+            streamBrrFile(f, lcd, controller);
             f.close();
           } else if (isBr2File(f)) {
             endSdRead();
             uploadBrrSongLoader(lcd);
-            streamBr2File(f, lcd);
+            streamBr2File(f, lcd, controller);
             f.close();
           }
           drawMenu(lcd);
