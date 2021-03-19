@@ -10,6 +10,8 @@
 
 
 #define PAUSE_TEXT_Y 100
+#define LOOP_TEXT_Y 110
+#define LOOP_ICON_OFFSET 2
 
 byte port0statebrr = 0;
 
@@ -208,11 +210,14 @@ void setupLoaderParameters(word sampleRate, bool stereo) {
     drawSongLength(lcd, 0, 50, sampleRate, stereo, fileSize);
     drawPgmText(lcd, TEXT_PRESS_B_TO_STOP, 0, 90);
     drawPgmText(lcd, TEXT_PRESS_A_TO_PAUSE, 0, PAUSE_TEXT_Y);
-    drawPgmText(lcd, TEXT_PRESS_LEFT_RIGHT_TO_SEEK, 0, 110);
+    drawPgmText(lcd, TEXT_PRESS_X_TO_TOGGLE_LOOP, 12, LOOP_TEXT_Y);
+    drawIcon(lcd, singlePlayIcon, LOOP_ICON_OFFSET, LOOP_TEXT_Y + LOOP_ICON_OFFSET);
+    drawPgmText(lcd, TEXT_PRESS_LEFT_RIGHT_TO_SEEK, 0, 120);
     endLcdWrite();
   }
 #endif
 
+#if defined(ARDUINO_AVR_UNO)
 void streamBrrFileData(File &file, bool stereo, Adafruit_ST7735 &lcd, SNESController &controller) {
   byte buffer[BRR_TRANSFER_BLOCK_SIZE];
 
@@ -223,10 +228,6 @@ void streamBrrFileData(File &file, bool stereo, Adafruit_ST7735 &lcd, SNESContro
   if (brrBatchCount * BRR_TRANSFER_BLOCK_COUNT < brrBlockCount) {
     ++brrBatchCount;
   }
-
-#if defined(ARDUINO_AVR_MEGA2560)
-  ProgressBar progressBar(lcd, 0, 70, 128, brrBatchCount);
-#endif
 
   uint32_t nextBrrBlock = 0;
   for (uint32_t i = 0; i < brrBatchCount; ++i) {
@@ -241,7 +242,6 @@ void streamBrrFileData(File &file, bool stereo, Adafruit_ST7735 &lcd, SNESContro
     uploadBrrBlock(buffer, nextBlockTransferCount, stereo);
     nextBrrBlock += nextBlockTransferCount;
 
-#if defined(ARDUINO_AVR_UNO)
     // Cancel playback (the Uno requires a little more I/O here due to limited pin assignments)
     digitalWrite(PIN_APU_A7, HIGH);
     digitalWrite(PIN_CONTROLLER_LATCH, 0);
@@ -249,7 +249,52 @@ void streamBrrFileData(File &file, bool stereo, Adafruit_ST7735 &lcd, SNESContro
     digitalWrite(PIN_CONTROLLER_LATCH, 0);
     bool bState = digitalRead(PIN_CONTROLLER_DATA) == 0;
     digitalWrite(PIN_APU_A7, LOW);
-#elif defined(ARDUINO_AVR_MEGA2560)
+
+    if (bState) {
+      break;
+    }
+  }
+  
+  // Upload the terminator
+  buffer[0] = 0x03;
+  for (int i = 1; i < 18; ++i) {
+    buffer[i] = 0x00;
+  }
+  buffer[9] = 0x03;
+  uploadBrrBlock(buffer, stereo ? 2 : 1, stereo);
+}
+#endif
+
+#if defined(ARDUINO_AVR_MEGA2560)
+void streamBrrFileData(File &file, bool stereo, Adafruit_ST7735 &lcd, SNESController &controller) {
+  byte buffer[BRR_TRANSFER_BLOCK_SIZE];
+
+  beginSdRead();
+  uint32_t brrBlockCount = (file.size() - file.position()) / 9;
+  uint32_t fileStart = file.position();
+  endSdRead();
+  uint32_t brrBatchCount = brrBlockCount / BRR_TRANSFER_BLOCK_COUNT;
+  if (brrBatchCount * BRR_TRANSFER_BLOCK_COUNT < brrBlockCount) {
+    ++brrBatchCount;
+  }
+
+  ProgressBar progressBar(lcd, 0, 70, 128, brrBatchCount);
+
+  uint32_t nextBrrBlock = 0;
+  uint32_t i = 0;
+  bool looping = false;
+  while (i < brrBatchCount) {
+    word nextBlockTransferCount = min(BRR_TRANSFER_BLOCK_COUNT, (word)min(brrBlockCount - nextBrrBlock, 65535));
+
+    // Fetch the next BRR blocks
+    beginSdRead();
+    file.read(buffer, nextBlockTransferCount * 9);
+    endSdRead();
+
+    // Upload the BRR blocks and advance
+    uploadBrrBlock(buffer, nextBlockTransferCount, stereo);
+    nextBrrBlock += nextBlockTransferCount;
+
     bool bState = false;
     controller.update(CONTROLLER_DEBOUNCE_DELAY);
     if (controller.justPressed(SNESController::B)) {
@@ -283,6 +328,9 @@ void streamBrrFileData(File &file, bool stereo, Adafruit_ST7735 &lcd, SNESContro
           bState = true;
         }
       }
+    } else if (controller.justPressed(SNESController::X)) {
+        looping = !looping;
+        drawIcon(lcd, looping ? loopIcon : singlePlayIcon, LOOP_ICON_OFFSET, LOOP_TEXT_Y + LOOP_ICON_OFFSET);
     } else if (controller.justPressed(SNESController::LEFT)) {
       // Seek backward
       uint32_t seekAmount = min(i, BRR_SEEK_AMOUNT * (stereo ? 2 : 1));
@@ -301,10 +349,25 @@ void streamBrrFileData(File &file, bool stereo, Adafruit_ST7735 &lcd, SNESContro
     controller.clearJustPressed();
 
     progressBar.addProgress(1);
-#endif
 
     if (bState) {
       break;
+    }
+
+    ++i;
+    if (looping && i >= brrBatchCount) {
+      i = 0;
+      file.seek(fileStart);
+      nextBrrBlock = 0;
+      progressBar.setProgress(i);
+
+      // Upload a terminator for smoother looping
+      buffer[0] = 0x03;
+      for (int j = 1; j < 18; ++j) {
+        buffer[j] = 0x00;
+      }
+      buffer[9] = 0x03;
+      uploadBrrBlock(buffer, stereo ? 2 : 1, stereo);
     }
   }
   
@@ -316,6 +379,7 @@ void streamBrrFileData(File &file, bool stereo, Adafruit_ST7735 &lcd, SNESContro
   buffer[9] = 0x03;
   uploadBrrBlock(buffer, stereo ? 2 : 1, stereo);
 }
+#endif
 
 void streamBrrFile(File &file, Adafruit_ST7735 &lcd, SNESController &controller) {
   // Initialize brr streaming sample rate
