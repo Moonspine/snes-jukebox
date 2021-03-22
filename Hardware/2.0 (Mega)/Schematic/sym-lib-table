@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name SNES_Jukebox-eagle-import)(type Legacy)(uri ${KIPRJMOD}/SNES_Jukebox-eagle-import.lib)(options "")(descr ""))
+)

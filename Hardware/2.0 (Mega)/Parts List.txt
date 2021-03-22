@@ -1,0 +1,19 @@
+- Arduino Mega
+-- Official: https://www.amazon.com/ARDUINO-MEGA-2560-REV3-A000067/dp/B0046AMGW0/ref=sr_1_1?dchild=1&keywords=arduino+mega&qid=1588916331&sr=8-1
+-- Elegoo (Probably fine): https://www.amazon.com/ELEGOO-ATmega2560-ATMEGA16U2-Projects-Compliant/dp/B01H4ZLZLQ/ref=sr_1_3?dchild=1&keywords=arduino+mega&qid=1588916331&sr=8-3
+-- I've used Inland myself, but I don't think they exist anymore
+-- I've used other Elegoo products, and they were good
+- SPC-700 - Taken from SNES
+- SPC-700 connector - Taken from SNES
+- SNES Controller - https://www.adafruit.com/product/131
+-- Really poor quality, but it works and it's cheap. Get a real one if you can.
+- SNES Controller socket - Taken from SNES
+- Headphone jack - https://www.amazon.com/gp/product/B01GBN1NO6/ref=ppx_yo_dt_b_asin_title_o02_s00?ie=UTF8&psc=1
+- Power LED - Taken from SNES
+- LED resistor - Taken from SNES
+- Arduino Mega shield - https://www.amazon.com/gp/product/B01J1L447I/ref=ppx_yo_dt_b_asin_title_o03_s00?ie=UTF8&psc=1
+- Elegoo protoboard (for support) - https://www.amazon.com/gp/product/B072Z7Y19F/ref=ppx_yo_dt_b_asin_title_o03_s01?ie=UTF8&psc=1
+- 24-pin IDC cable (for SPC-700 hookup) - https://www.amazon.com/gp/product/B01BGNLPX0/ref=ppx_yo_dt_b_asin_title_o01_s00?ie=UTF8&psc=1
+- Miscellaneous pin headers
+- Project box
+- 2-part epoxy

@@ -1,0 +1,797 @@
+EESchema Schematic File Version 4
+LIBS:SNES Jukebox-cache
+EELAYER 29 0
+EELAYER END
+$Descr User 12051 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+Wire Wire Line
+	1700 3900 1700 4300
+Wire Wire Line
+	1700 3900 2100 3900
+Connection ~ 1700 3900
+Text Label 1700 3900 0    10   ~ 0
+DGND
+Wire Wire Line
+	5000 3300 5200 3300
+Wire Wire Line
+	5200 3300 5200 3800
+Text Label 5000 3300 0    10   ~ 0
+DGND
+Wire Wire Line
+	9300 4100 9300 3700
+Wire Wire Line
+	9300 3700 9500 3700
+Text Label 9300 4100 0    10   ~ 0
+DGND
+Wire Wire Line
+	1000 5000 900  5000
+Wire Wire Line
+	900  5000 900  5600
+Wire Wire Line
+	900  5600 1000 5600
+Wire Wire Line
+	900  5600 900  5900
+Connection ~ 900  5600
+Text Label 1000 5000 0    10   ~ 0
+DGND
+Wire Wire Line
+	4100 5100 2900 5100
+Wire Wire Line
+	2900 5100 2900 5500
+Connection ~ 2900 5100
+Text Label 4100 5100 0    10   ~ 0
+DGND
+Wire Wire Line
+	4700 5000 5100 5000
+Wire Wire Line
+	5100 5000 5100 6100
+Text Label 4700 5000 0    10   ~ 0
+DGND
+Wire Wire Line
+	6000 1700 6000 2200
+Text Label 6000 1700 0    10   ~ 0
+DGND
+Wire Wire Line
+	8500 2800 8500 3100
+Text Label 8500 2800 0    10   ~ 0
+DGND
+Wire Wire Line
+	7200 5200 7000 5200
+Wire Wire Line
+	7000 5200 7000 5400
+Wire Wire Line
+	7000 5400 7200 5400
+Wire Wire Line
+	7000 5400 7000 6100
+Connection ~ 7000 5400
+Text Label 7200 5200 0    10   ~ 0
+DGND
+Wire Wire Line
+	4100 4400 4000 4400
+Wire Wire Line
+	4000 4400 3800 4400
+Wire Wire Line
+	4700 3300 4000 3300
+Wire Wire Line
+	4000 3300 4000 4400
+Connection ~ 4000 4400
+Wire Wire Line
+	1700 3600 1700 3300
+Wire Wire Line
+	1700 3600 2100 3600
+Connection ~ 1700 3600
+Text Label 1700 3600 0    10   ~ 0
++5V
+Wire Wire Line
+	3800 3900 3800 4000
+Text Label 3800 3900 0    10   ~ 0
++5V
+Wire Wire Line
+	5000 3100 5200 3100
+Wire Wire Line
+	5200 3100 5200 2700
+Text Label 5000 3100 0    10   ~ 0
++5V
+Wire Wire Line
+	4100 5000 3200 5000
+Wire Wire Line
+	3200 5000 3200 4800
+Wire Wire Line
+	2900 4800 3200 4800
+Connection ~ 3200 4800
+Text Label 4100 5000 0    10   ~ 0
++5V
+Wire Wire Line
+	4700 5200 5500 5200
+Wire Wire Line
+	5500 5200 5500 5100
+Text Label 4700 5200 0    10   ~ 0
++5V
+Wire Wire Line
+	6100 1700 6100 2000
+Wire Wire Line
+	6100 2000 5600 2000
+Wire Wire Line
+	6900 1700 6900 2000
+Wire Wire Line
+	6900 2000 6100 2000
+Connection ~ 6100 2000
+Text Label 6100 1700 0    10   ~ 0
++5V
+Wire Wire Line
+	7900 2800 7900 3100
+Wire Wire Line
+	7900 3100 7500 3100
+Wire Wire Line
+	7500 3100 7500 2900
+Text Label 7900 2800 0    10   ~ 0
++5V
+Wire Wire Line
+	7500 4300 8500 4300
+Wire Wire Line
+	7500 5100 8500 5100
+Wire Wire Line
+	8500 5100 8500 4300
+Wire Wire Line
+	7500 5400 8500 5400
+Wire Wire Line
+	8500 5400 8500 5100
+Connection ~ 8500 4300
+Connection ~ 8500 5100
+Text Label 7500 4300 0    10   ~ 0
++5V
+Wire Wire Line
+	4700 3200 4100 3200
+Wire Wire Line
+	4100 3200 4100 4100
+Wire Wire Line
+	4100 4100 4900 4100
+Wire Wire Line
+	4900 4100 4900 5300
+Wire Wire Line
+	4900 5300 4700 5300
+Wire Wire Line
+	4900 5300 6200 5300
+Wire Wire Line
+	6200 5300 6200 4100
+Wire Wire Line
+	6200 4100 7800 4100
+Wire Wire Line
+	7800 4100 7800 4600
+Wire Wire Line
+	7800 4600 7500 4600
+Wire Wire Line
+	6200 4100 6200 3300
+Wire Wire Line
+	6200 3300 6200 3000
+Wire Wire Line
+	6200 3000 6700 3000
+Wire Wire Line
+	6700 3000 6700 1700
+Wire Wire Line
+	8000 2800 8000 3300
+Wire Wire Line
+	8000 3300 6200 3300
+Connection ~ 4900 5300
+Connection ~ 6200 4100
+Connection ~ 6200 3300
+Wire Wire Line
+	4700 3100 4200 3100
+Wire Wire Line
+	4200 3100 4200 4000
+Wire Wire Line
+	4200 4000 5000 4000
+Wire Wire Line
+	5000 4000 5000 5400
+Wire Wire Line
+	5000 5400 4700 5400
+Wire Wire Line
+	5000 5400 6300 5400
+Wire Wire Line
+	6300 5400 6300 4600
+Wire Wire Line
+	6300 4600 7200 4600
+Wire Wire Line
+	6300 4600 6300 3100
+Wire Wire Line
+	6300 3100 6800 3100
+Wire Wire Line
+	6800 3100 6800 1700
+Connection ~ 5000 5400
+Connection ~ 6300 4600
+Wire Wire Line
+	5000 3200 5400 3200
+Wire Wire Line
+	5400 3200 5400 5500
+Wire Wire Line
+	5400 5500 4700 5500
+Wire Wire Line
+	5400 5500 6400 5500
+Wire Wire Line
+	6400 5500 6400 4500
+Wire Wire Line
+	6400 4500 7200 4500
+Wire Wire Line
+	6400 4500 6400 3200
+Wire Wire Line
+	6400 3200 6600 3200
+Wire Wire Line
+	6600 3200 8100 3200
+Wire Wire Line
+	8100 3200 8100 2800
+Wire Wire Line
+	6600 1700 6600 3200
+Connection ~ 5400 5500
+Connection ~ 6400 4500
+Connection ~ 6600 3200
+Wire Wire Line
+	7500 5300 9050 5300
+Wire Wire Line
+	7200 5300 6900 5300
+Wire Wire Line
+	6900 5300 6900 3900
+Wire Wire Line
+	6900 3900 7300 3900
+Wire Wire Line
+	4100 5200 2300 5200
+Wire Wire Line
+	2300 5200 2300 5000
+Wire Wire Line
+	1700 5000 1700 5200
+Wire Wire Line
+	1700 5000 1300 5000
+Wire Wire Line
+	2300 5000 2100 5000
+Wire Wire Line
+	2100 5000 1700 5000
+Wire Wire Line
+	2100 5000 2100 5100
+Connection ~ 2100 5000
+Connection ~ 1700 5000
+Wire Wire Line
+	4100 5300 2300 5300
+Wire Wire Line
+	2300 5300 2300 5600
+Wire Wire Line
+	2300 5600 2100 5600
+Wire Wire Line
+	2100 5600 1700 5600
+Wire Wire Line
+	1700 5600 1700 5400
+Wire Wire Line
+	2100 5600 2100 5500
+Wire Wire Line
+	1700 5600 1300 5600
+Connection ~ 1700 5600
+Connection ~ 2100 5600
+Wire Wire Line
+	4100 4700 4000 4700
+Wire Wire Line
+	4000 4700 4000 5900
+Wire Wire Line
+	4000 5900 6800 5900
+Wire Wire Line
+	6800 5900 6800 4700
+Wire Wire Line
+	6800 4700 7200 4700
+Wire Wire Line
+	4100 4800 3900 4800
+Wire Wire Line
+	3900 4800 3900 6000
+Wire Wire Line
+	3900 6000 7800 6000
+Wire Wire Line
+	7800 6000 7800 4700
+Wire Wire Line
+	7800 4700 7500 4700
+Wire Wire Line
+	4100 4900 3800 4900
+Wire Wire Line
+	3800 4900 3800 6400
+Wire Wire Line
+	3800 6400 6700 6400
+Wire Wire Line
+	6700 6400 6700 4800
+Wire Wire Line
+	6700 4800 7200 4800
+Wire Wire Line
+	4100 5400 3700 5400
+Wire Wire Line
+	3700 5400 3700 6500
+Wire Wire Line
+	3700 6500 7900 6500
+Wire Wire Line
+	7900 6500 7900 4800
+Wire Wire Line
+	7900 4800 7500 4800
+Wire Wire Line
+	4100 5500 3600 5500
+Wire Wire Line
+	3600 5500 3600 6600
+Wire Wire Line
+	3600 6600 6600 6600
+Wire Wire Line
+	6600 6600 6600 4900
+Wire Wire Line
+	6600 4900 7200 4900
+Wire Wire Line
+	4100 5600 3500 5600
+Wire Wire Line
+	3500 5600 3500 6700
+Wire Wire Line
+	3500 6700 8000 6700
+Wire Wire Line
+	8000 6700 8000 4900
+Wire Wire Line
+	8000 4900 7500 4900
+Wire Wire Line
+	4100 5700 3400 5700
+Wire Wire Line
+	3400 5700 3400 6800
+Wire Wire Line
+	3400 6800 5700 6800
+Wire Wire Line
+	5700 6800 6500 6800
+Wire Wire Line
+	6500 6800 6500 4400
+Wire Wire Line
+	6500 4400 7200 4400
+Wire Wire Line
+	6200 1700 6200 2600
+Wire Wire Line
+	6200 2600 5700 2600
+Wire Wire Line
+	5700 2600 5700 6800
+Connection ~ 5700 6800
+Wire Wire Line
+	4700 5700 8100 5700
+Wire Wire Line
+	8100 5700 8100 4400
+Wire Wire Line
+	8100 4400 7500 4400
+Wire Wire Line
+	4700 5600 8200 5600
+Wire Wire Line
+	8200 5600 8200 4500
+Wire Wire Line
+	8200 4500 7500 4500
+Wire Wire Line
+	4700 4900 6100 4900
+Wire Wire Line
+	6100 4900 6100 5000
+Wire Wire Line
+	6100 5000 7200 5000
+Wire Wire Line
+	4700 4800 6100 4800
+Wire Wire Line
+	6100 4800 6100 2900
+Wire Wire Line
+	6100 2900 6400 2900
+Wire Wire Line
+	6400 2900 6400 1700
+Wire Wire Line
+	4700 4700 6000 4700
+Wire Wire Line
+	6000 4700 6000 4300
+Wire Wire Line
+	6000 4300 7200 4300
+Wire Wire Line
+	4700 4600 5900 4600
+Wire Wire Line
+	5900 4600 5900 2800
+Wire Wire Line
+	5900 2800 6500 2800
+Wire Wire Line
+	6500 2800 6500 1700
+Wire Wire Line
+	4700 4500 5800 4500
+Wire Wire Line
+	5800 4500 5800 2700
+Wire Wire Line
+	5800 2700 6300 2700
+Wire Wire Line
+	6300 2700 6300 1700
+Wire Wire Line
+	4700 4400 5600 4400
+Wire Wire Line
+	5600 4400 5600 3400
+Wire Wire Line
+	5600 3400 8200 3400
+Wire Wire Line
+	8200 3400 8200 2800
+$Comp
+L SNES_Jukebox-eagle-import:PN87520 X1
+U 1 1 4F0D105D
+P 1600 3700
+F 0 "X1" H 1600 4050 59  0000 L BNN
+F 1 "Power In" H 1600 3400 59  0000 L BNN
+F 2 "SNES Jukebox:PN87520" H 1600 3700 50  0001 C CNN
+F 3 "" H 1600 3700 50  0001 C CNN
+	1    1600 3700
+	-1   0    0    1   
+$EndComp
+$Comp
+L SNES_Jukebox-eagle-import:R-US_0207_10 R1
+U 1 1 DE04AF3C
+P 3800 4200
+F 0 "R1" H 3650 4259 59  0000 L BNN
+F 1 "10K" H 3650 4070 59  0000 L BNN
+F 2 "SNES Jukebox:0207_10" H 3800 4200 50  0001 C CNN
+F 3 "" H 3800 4200 50  0001 C CNN
+	1    3800 4200
+	0    -1   -1   0   
+$EndComp
+$Comp
+L SNES_Jukebox-eagle-import:R-US_0207_10 R2
+U 1 1 851B3FB9
+P 2100 5300
+F 0 "R2" H 1950 5359 59  0000 L BNN
+F 1 "1M" H 1950 5170 59  0000 L BNN
+F 2 "SNES Jukebox:0207_10" H 2100 5300 50  0001 C CNN
+F 3 "" H 2100 5300 50  0001 C CNN
+	1    2100 5300
+	0    -1   -1   0   
+$EndComp
+$Comp
+L SNES_Jukebox-eagle-import:R-US_0207_10 R3
+U 1 1 A04F324A
+P 7500 3900
+F 0 "R3" H 7350 3959 59  0000 L BNN
+F 1 "47" H 7350 3770 59  0000 L BNN
+F 2 "SNES Jukebox:0207_10" H 7500 3900 50  0001 C CNN
+F 3 "" H 7500 3900 50  0001 C CNN
+	1    7500 3900
+	1    0    0    -1  
+$EndComp
+$Comp
+L SNES_Jukebox-eagle-import:R-US_0207_10 R4
+U 1 1 BADBB996
+P 9050 4800
+F 0 "R4" H 8900 4859 59  0000 L BNN
+F 1 "47" H 8900 4670 59  0000 L BNN
+F 2 "SNES Jukebox:0207_10" H 9050 4800 50  0001 C CNN
+F 3 "" H 9050 4800 50  0001 C CNN
+	1    9050 4800
+	0    -1   -1   0   
+$EndComp
+$Comp
+L SNES_Jukebox-eagle-import:C-EU025-025X050 C1
+U 1 1 E7D47EA7
+P 2100 3700
+F 0 "C1" H 2160 3715 59  0000 L BNN
+F 1 "10uF" H 2160 3515 59  0000 L BNN
+F 2 "SNES Jukebox:C025-025X050" H 2100 3700 50  0001 C CNN
+F 3 "" H 2100 3700 50  0001 C CNN
+	1    2100 3700
+	1    0    0    -1  
+$EndComp
+$Comp
+L SNES_Jukebox-eagle-import:C-EU025-025X050 C2
+U 1 1 C8DDE19D
+P 2900 4900
+F 0 "C2" H 2960 4915 59  0000 L BNN
+F 1 "0.1uF" H 2960 4715 59  0000 L BNN
+F 2 "SNES Jukebox:C025-025X050" H 2900 4900 50  0001 C CNN
+F 3 "" H 2900 4900 50  0001 C CNN
+	1    2900 4900
+	1    0    0    -1  
+$EndComp
+$Comp
+L SNES_Jukebox-eagle-import:DIL28-3 IC1
+U 1 1 97D9050E
+P 4400 5000
+F 0 "IC1" H 4225 5675 59  0000 L BNN
+F 1 "Atmega 328P" H 4225 4150 59  0000 L BNN
+F 2 "SNES Jukebox:DIL28-3" H 4400 5000 50  0001 C CNN
+F 3 "" H 4400 5000 50  0001 C CNN
+	1    4400 5000
+	1    0    0    -1  
+$EndComp
+$Comp
+L SNES_Jukebox-eagle-import:PINHD-1X10 JP1
+U 1 1 6B60D7D7
+P 6400 1600
+F 0 "JP1" H 6150 2125 59  0000 L BNN
+F 1 "Adafruit 358" H 6150 900 59  0000 L BNN
+F 2 "SNES Jukebox:1X10" H 6400 1600 50  0001 C CNN
+F 3 "" H 6400 1600 50  0001 C CNN
+	1    6400 1600
+	0    -1   -1   0   
+$EndComp
+$Comp
+L SNES_Jukebox-eagle-import:PINHD-2X12 JP2
+U 1 1 D61E78B2
+P 7300 4800
+F 0 "JP2" H 7050 5425 59  0000 L BNN
+F 1 "SPC-700" H 7050 4000 59  0000 L BNN
+F 2 "SNES Jukebox:2X12" H 7300 4800 50  0001 C CNN
+F 3 "" H 7300 4800 50  0001 C CNN
+	1    7300 4800
+	1    0    0    -1  
+$EndComp
+$Comp
+L SNES_Jukebox-eagle-import:C-EU025-025X050 C3
+U 1 1 5ADCC44B
+P 1200 5000
+F 0 "C3" H 1260 5015 59  0000 L BNN
+F 1 "22pF" H 1260 4815 59  0000 L BNN
+F 2 "SNES Jukebox:C025-025X050" H 1200 5000 50  0001 C CNN
+F 3 "" H 1200 5000 50  0001 C CNN
+	1    1200 5000
+	0    1    1    0   
+$EndComp
+$Comp
+L SNES_Jukebox-eagle-import:C-EU025-025X050 C4
+U 1 1 D14D4BF0
+P 1200 5600
+F 0 "C4" H 1260 5615 59  0000 L BNN
+F 1 "22pF" H 1260 5415 59  0000 L BNN
+F 2 "SNES Jukebox:C025-025X050" H 1200 5600 50  0001 C CNN
+F 3 "" H 1200 5600 50  0001 C CNN
+	1    1200 5600
+	0    1    1    0   
+$EndComp
+$Comp
+L SNES_Jukebox-eagle-import:CRYSTALHC49S Q1
+U 1 1 4F9B6107
+P 1700 5300
+F 0 "Q1" H 1800 5340 59  0000 L BNN
+F 1 "16MHz" H 1800 5200 59  0000 L BNN
+F 2 "SNES Jukebox:HC49_S" H 1700 5300 50  0001 C CNN
+F 3 "" H 1700 5300 50  0001 C CNN
+	1    1700 5300
+	0    1    1    0   
+$EndComp
+$Comp
+L SNES_Jukebox-eagle-import:DGND #SUPPLY1
+U 1 1 F54A36B8
+P 1700 4400
+F 0 "#SUPPLY1" H 1700 4400 50  0001 C CNN
+F 1 "DGND" H 1595 4275 59  0000 L BNN
+F 2 "" H 1700 4400 50  0001 C CNN
+F 3 "" H 1700 4400 50  0001 C CNN
+	1    1700 4400
+	1    0    0    -1  
+$EndComp
+$Comp
+L SNES_Jukebox-eagle-import:+5V #SUPPLY2
+U 1 1 19032892
+P 3800 3800
+F 0 "#SUPPLY2" H 3800 3800 50  0001 C CNN
+F 1 "+5V" H 3725 3925 59  0000 L BNN
+F 2 "" H 3800 3800 50  0001 C CNN
+F 3 "" H 3800 3800 50  0001 C CNN
+	1    3800 3800
+	1    0    0    -1  
+$EndComp
+$Comp
+L SNES_Jukebox-eagle-import:+5V #SUPPLY3
+U 1 1 4F8E092B
+P 1700 3200
+F 0 "#SUPPLY3" H 1700 3200 50  0001 C CNN
+F 1 "+5V" H 1625 3325 59  0000 L BNN
+F 2 "" H 1700 3200 50  0001 C CNN
+F 3 "" H 1700 3200 50  0001 C CNN
+	1    1700 3200
+	1    0    0    -1  
+$EndComp
+$Comp
+L SNES_Jukebox-eagle-import:PINHD-2X3 JP3
+U 1 1 B4A5EA64
+P 4800 3200
+F 0 "JP3" H 4550 3425 59  0000 L BNN
+F 1 "ISP Terminal" H 4550 2900 59  0000 L BNN
+F 2 "SNES Jukebox:2X03" H 4800 3200 50  0001 C CNN
+F 3 "" H 4800 3200 50  0001 C CNN
+	1    4800 3200
+	1    0    0    -1  
+$EndComp
+$Comp
+L SNES_Jukebox-eagle-import:DGND #SUPPLY4
+U 1 1 1C9152C2
+P 5200 3900
+F 0 "#SUPPLY4" H 5200 3900 50  0001 C CNN
+F 1 "DGND" H 5095 3775 59  0000 L BNN
+F 2 "" H 5200 3900 50  0001 C CNN
+F 3 "" H 5200 3900 50  0001 C CNN
+	1    5200 3900
+	1    0    0    -1  
+$EndComp
+$Comp
+L SNES_Jukebox-eagle-import:+5V #SUPPLY5
+U 1 1 20B1DDDE
+P 5200 2600
+F 0 "#SUPPLY5" H 5200 2600 50  0001 C CNN
+F 1 "+5V" H 5125 2725 59  0000 L BNN
+F 2 "" H 5200 2600 50  0001 C CNN
+F 3 "" H 5200 2600 50  0001 C CNN
+	1    5200 2600
+	1    0    0    -1  
+$EndComp
+$Comp
+L SNES_Jukebox-eagle-import:1503_02 X2
+U 1 1 9186E423
+P 9700 3800
+F 0 "X2" H 9600 3960 59  0000 L BNN
+F 1 "Audio Out" H 9600 3450 59  0000 L BNN
+F 2 "SNES Jukebox:1503_02" H 9700 3800 50  0001 C CNN
+F 3 "" H 9700 3800 50  0001 C CNN
+	1    9700 3800
+	1    0    0    -1  
+$EndComp
+$Comp
+L SNES_Jukebox-eagle-import:DGND #SUPPLY6
+U 1 1 A7CD5EB6
+P 9300 4200
+F 0 "#SUPPLY6" H 9300 4200 50  0001 C CNN
+F 1 "DGND" H 9195 4075 59  0000 L BNN
+F 2 "" H 9300 4200 50  0001 C CNN
+F 3 "" H 9300 4200 50  0001 C CNN
+	1    9300 4200
+	1    0    0    -1  
+$EndComp
+$Comp
+L SNES_Jukebox-eagle-import:DGND #SUPPLY7
+U 1 1 2907E397
+P 900 6000
+F 0 "#SUPPLY7" H 900 6000 50  0001 C CNN
+F 1 "DGND" H 795 5875 59  0000 L BNN
+F 2 "" H 900 6000 50  0001 C CNN
+F 3 "" H 900 6000 50  0001 C CNN
+	1    900  6000
+	1    0    0    -1  
+$EndComp
+$Comp
+L SNES_Jukebox-eagle-import:+5V #SUPPLY8
+U 1 1 39566F8A
+P 3200 4700
+F 0 "#SUPPLY8" H 3200 4700 50  0001 C CNN
+F 1 "+5V" H 3125 4825 59  0000 L BNN
+F 2 "" H 3200 4700 50  0001 C CNN
+F 3 "" H 3200 4700 50  0001 C CNN
+	1    3200 4700
+	1    0    0    -1  
+$EndComp
+$Comp
+L SNES_Jukebox-eagle-import:DGND #SUPPLY9
+U 1 1 B8640D54
+P 2900 5600
+F 0 "#SUPPLY9" H 2900 5600 50  0001 C CNN
+F 1 "DGND" H 2795 5475 59  0000 L BNN
+F 2 "" H 2900 5600 50  0001 C CNN
+F 3 "" H 2900 5600 50  0001 C CNN
+	1    2900 5600
+	1    0    0    -1  
+$EndComp
+$Comp
+L SNES_Jukebox-eagle-import:DGND #SUPPLY10
+U 1 1 28999800
+P 5100 6200
+F 0 "#SUPPLY10" H 5100 6200 50  0001 C CNN
+F 1 "DGND" H 4995 6075 59  0000 L BNN
+F 2 "" H 5100 6200 50  0001 C CNN
+F 3 "" H 5100 6200 50  0001 C CNN
+	1    5100 6200
+	1    0    0    -1  
+$EndComp
+$Comp
+L SNES_Jukebox-eagle-import:+5V #SUPPLY11
+U 1 1 E0B04C0E
+P 5500 5000
+F 0 "#SUPPLY11" H 5500 5000 50  0001 C CNN
+F 1 "+5V" H 5425 5125 59  0000 L BNN
+F 2 "" H 5500 5000 50  0001 C CNN
+F 3 "" H 5500 5000 50  0001 C CNN
+	1    5500 5000
+	1    0    0    -1  
+$EndComp
+$Comp
+L SNES_Jukebox-eagle-import:DGND #SUPPLY12
+U 1 1 31C2C8A5
+P 6000 2300
+F 0 "#SUPPLY12" H 6000 2300 50  0001 C CNN
+F 1 "DGND" H 5895 2175 59  0000 L BNN
+F 2 "" H 6000 2300 50  0001 C CNN
+F 3 "" H 6000 2300 50  0001 C CNN
+	1    6000 2300
+	1    0    0    -1  
+$EndComp
+$Comp
+L SNES_Jukebox-eagle-import:+5V #SUPPLY13
+U 1 1 8D803956
+P 5600 1900
+F 0 "#SUPPLY13" H 5600 1900 50  0001 C CNN
+F 1 "+5V" H 5525 2025 59  0000 L BNN
+F 2 "" H 5600 1900 50  0001 C CNN
+F 3 "" H 5600 1900 50  0001 C CNN
+	1    5600 1900
+	1    0    0    -1  
+$EndComp
+$Comp
+L SNES_Jukebox-eagle-import:PINHD-1X7 JP4
+U 1 1 BAF77653
+P 8200 2700
+F 0 "JP4" H 7950 3125 59  0000 L BNN
+F 1 "Controller" H 7950 2200 59  0000 L BNN
+F 2 "SNES Jukebox:1X07" H 8200 2700 50  0001 C CNN
+F 3 "" H 8200 2700 50  0001 C CNN
+	1    8200 2700
+	0    -1   -1   0   
+$EndComp
+$Comp
+L SNES_Jukebox-eagle-import:+5V #SUPPLY14
+U 1 1 C4643C99
+P 7500 2800
+F 0 "#SUPPLY14" H 7500 2800 50  0001 C CNN
+F 1 "+5V" H 7425 2925 59  0000 L BNN
+F 2 "" H 7500 2800 50  0001 C CNN
+F 3 "" H 7500 2800 50  0001 C CNN
+	1    7500 2800
+	1    0    0    -1  
+$EndComp
+$Comp
+L SNES_Jukebox-eagle-import:DGND #SUPPLY15
+U 1 1 2739B52F
+P 8500 3200
+F 0 "#SUPPLY15" H 8500 3200 50  0001 C CNN
+F 1 "DGND" H 8395 3075 59  0000 L BNN
+F 2 "" H 8500 3200 50  0001 C CNN
+F 3 "" H 8500 3200 50  0001 C CNN
+	1    8500 3200
+	1    0    0    -1  
+$EndComp
+$Comp
+L SNES_Jukebox-eagle-import:+5V #SUPPLY16
+U 1 1 86F85EE9
+P 8500 4200
+F 0 "#SUPPLY16" H 8500 4200 50  0001 C CNN
+F 1 "+5V" H 8425 4325 59  0000 L BNN
+F 2 "" H 8500 4200 50  0001 C CNN
+F 3 "" H 8500 4200 50  0001 C CNN
+	1    8500 4200
+	1    0    0    -1  
+$EndComp
+$Comp
+L SNES_Jukebox-eagle-import:DGND #SUPPLY17
+U 1 1 26B7FE90
+P 7000 6200
+F 0 "#SUPPLY17" H 7000 6200 50  0001 C CNN
+F 1 "DGND" H 6895 6075 59  0000 L BNN
+F 2 "" H 7000 6200 50  0001 C CNN
+F 3 "" H 7000 6200 50  0001 C CNN
+	1    7000 6200
+	1    0    0    -1  
+$EndComp
+Text Notes 7200 1700 0    59   ~ 0
+Pin 1 considered leftmost when viewing screen
+Text Notes 8900 2800 0    59   ~ 0
+Pin 1 considered square end
+Text Notes 9100 4550 0    59   ~ 0
+Right
+Text Notes 8000 3850 0    59   ~ 0
+Left
+Text Notes 1100 1900 0    59   ~ 0
+SNES Jukebox Hardware Design\nOriginal Design Copyright (C) 2013-2021 Moonspine\nYou are free to use, distribute, or modify this design in any way.
+Wire Wire Line
+	7700 3900 8900 3900
+Wire Wire Line
+	8900 3900 8900 4000
+Wire Wire Line
+	8900 4000 9500 4000
+Wire Wire Line
+	9050 5300 9050 5000
+Wire Wire Line
+	9050 4600 9050 3900
+Wire Wire Line
+	9050 3900 9500 3900
+$EndSCHEMATC

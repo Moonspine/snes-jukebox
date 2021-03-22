@@ -72,7 +72,7 @@
   * D23 (PA1) - APU A7
   * D62..D69 (PK) - APU Data
   * Vcc - APU A6, APU Vcc, APU Audio Vcc
-  * Gnd - APU Gnd, SPU Audio Gnd
+  * Gnd - APU Gnd, APU Audio Gnd
   */
 
   #define PIN_SD_CS               53
