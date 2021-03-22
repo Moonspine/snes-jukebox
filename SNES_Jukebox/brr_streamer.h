@@ -283,6 +283,7 @@ void streamBrrFileData(File &file, bool stereo, Adafruit_ST7735 &lcd, SNESContro
   uint32_t nextBrrBlock = 0;
   uint32_t i = 0;
   bool looping = false;
+  const uint32_t brrSeekAmount = BRR_SEEK_AMOUNT + (BRR_SEEK_AMOUNT % 2);
   while (i < brrBatchCount) {
     word nextBlockTransferCount = min(BRR_TRANSFER_BLOCK_COUNT, (word)min(brrBlockCount - nextBrrBlock, 65535));
 
@@ -333,17 +334,16 @@ void streamBrrFileData(File &file, bool stereo, Adafruit_ST7735 &lcd, SNESContro
         drawIcon(lcd, looping ? loopIcon : singlePlayIcon, LOOP_ICON_OFFSET, LOOP_TEXT_Y + LOOP_ICON_OFFSET);
     } else if (controller.justPressed(SNESController::LEFT)) {
       // Seek backward
-      uint32_t seekAmount = min(i, BRR_SEEK_AMOUNT * (stereo ? 2 : 1));
+      uint32_t seekAmount = min(i, brrSeekAmount);
       i -= seekAmount;
       nextBrrBlock -= seekAmount * BRR_TRANSFER_BLOCK_COUNT;
       file.seek(file.position() - seekAmount * BRR_TRANSFER_BLOCK_COUNT * 9);
       progressBar.setProgress(i);
     } else if (controller.justPressed(SNESController::RIGHT)) {
       // Seek forward
-      uint32_t seekAmount = BRR_SEEK_AMOUNT * (stereo ? 2 : 1);
-      i += seekAmount;
-      nextBrrBlock += seekAmount * BRR_TRANSFER_BLOCK_COUNT;
-      file.seek(file.position() + (uint32_t)seekAmount * BRR_TRANSFER_BLOCK_COUNT * 9);
+      i += brrSeekAmount;
+      nextBrrBlock += brrSeekAmount * BRR_TRANSFER_BLOCK_COUNT;
+      file.seek(file.position() + (uint32_t)brrSeekAmount * BRR_TRANSFER_BLOCK_COUNT * 9);
       progressBar.setProgress(i);
     }
     controller.clearJustPressed();
